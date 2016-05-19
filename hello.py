@@ -8,12 +8,6 @@ i=0
 j=9
 print(m)
 
-if m==0:
-   n=2
-else:
-   n=1
-
-print(n)
 
 while i==0:
 	print(m)

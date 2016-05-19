@@ -1,3 +1,5 @@
+#last edited by Miriam Rathbun on 5/19/2016
+#This file solves for x such that Ax=B after generating a random square matrix A (nxn) and vector B (length n)
 import numpy as np
 import random
 

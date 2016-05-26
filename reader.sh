@@ -1,6 +1,6 @@
 #!/bin/bash
 #not actually sure what this first line does
-#last edited by Miriam Rathbun on 5/25/2016
+#last edited by Miriam Rathbun on 5/26/2016
 #script reads an input file of known structure. It loops through all .inp files in the folder and runs the python script for each one of those. 
 
 for f in `ls *.inp`
@@ -16,3 +16,6 @@ do
 
 python ./vector_practice.py $length $rightBC $leftBC $numgroups $f
 done
+
+#combines plots
+python ./plotter.py $length

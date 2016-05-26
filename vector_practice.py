@@ -1,5 +1,6 @@
-#last edited by Miriam Rathbun on 5/25/2016
+#last edited by Miriam Rathbun on 5/26/2016
 #this script is run from reader.sh. It creates two matrices A and B and solves for x such that Ax=B. Output is dumped to files in the output folder. 
+#this script requires all the input files to give the same value for "length"
 
 #use sudo apt-get install python.numpy if needed for any of these (required the first time on a new machine)
 import numpy as np
@@ -35,11 +36,20 @@ while det==0:											#if det=0, A is singular and should be re-made
 Ainv=np.linalg.inv(A)									#take the inverse of A
 x=np.dot(Ainv,B)										#solution x= matrix multiplication of Ainv and B
 
+plt.plot(x)
+plt.ylabel('some numbers')
+plt.savefig('./output/figure'+name)
 
-f = open('./output/output_'+name+'.text', 'w')
-print >> f, 'Solution to Ax=B where A= \n', A
-print >> f, 'and B= \n', B
-print >> f, 'is: \n', x
+if name=='1':
+    f = open('./output/output.text', 'w')
+    f.close()
+
+f = open('./output/output.text', 'a')
+
+i=0
+while i < length:
+   print >> f, float(x[i])
+   i = i+1
 f.close()
 
 #print(B)

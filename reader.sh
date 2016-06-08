@@ -12,10 +12,11 @@ do
    rightBC=`awk '/rightBC/{print $2}' $name` 
    leftBC=`awk '/leftBC/{print $2}' $name`
    numgroups=`awk '/numgroups/{print $2}' $name`
+   numbins=`awk '/numbins/{print $2}' $name`
 
 
-python ./vector_practice.py $length $rightBC $leftBC $numgroups $f
+python ./diffusion.py $length $rightBC $leftBC $numgroups $f $numbins
 done
 
 #combines plots
-python ./plotter.py $length
+python ./plotter.py $numbins

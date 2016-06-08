@@ -8,15 +8,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #variables from bash
-length = int(sys.argv[1])
+n = int(sys.argv[1])
 
 with open("./output/output.text") as f:
 	data = f.read()
 	
 data = data.split('\n')
-plt.plot(data[0:length])
-for i in range (1, (len(data)-1)/length):
-	plt.plot(data[i*length:(i+1)*length])
+plt.plot(data[0:n])
+for i in range (1, (len(data)-1)/n):
+	plt.plot(data[i*length:(i+1)*n])
 plt.savefig('./output/figure_all')
 
 print('done')

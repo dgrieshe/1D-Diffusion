@@ -1,4 +1,5 @@
-length 5
+length 400
 rightBC escape 
 leftBC escape 
-numgroups 2
+numgroups 1
+numbins 4

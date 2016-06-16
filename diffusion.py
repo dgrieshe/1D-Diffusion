@@ -23,11 +23,11 @@ f = sys.argv[5]
 name = f[len(f)-5]										 
 #number of bins
 n = int(sys.argv[6])
-#cross sections for each bin. WORK IN PROGRESS
+#cross sections for each bin. should denote an error when number of xs is different from n
 cross_section=np.zeros(n)
-#for i in range(0,n):
-	#cross_section[i]= float(sys.argv[7+i])
-#print cross_section
+for i in range(0,n):
+	cross_section[i]= float(sys.argv[7+i])
+print cross_section
 
 
 

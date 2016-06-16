@@ -13,9 +13,13 @@ do
    leftBC=`awk '/leftBC/{print $2}' $name`
    numgroups=`awk '/numgroups/{print $2}' $name`
    numbins=`awk '/numbins/{print $2}' $name`
+   xs1=`awk '/xs/{print $2}' $name`
+   xs2=`awk '/xs/{print $3}' $name`
+   xs3=`awk '/xs/{print $4}' $name`
+   xs4=`awk '/xs/{print $5}' $name`
 
 
-python ./diffusion.py $length $rightBC $leftBC $numgroups $f $numbins
+python ./diffusion.py $length $rightBC $leftBC $numgroups $f $numbins $xs1 $xs2 $xs3 $xs4 $xs5
 done
 
 #combines plots

@@ -1,4 +1,4 @@
-#last edited by Miriam Rathbun on 5/26/2016
+#last edited by Miriam Rathbun on 6/18/2016
 #This script plots all of the ouput from vector_practice separate runs on one figure
 print('plotting all figures together >> figure_all.png')
 
@@ -9,6 +9,7 @@ import numpy as np
 
 #variables from bash
 n = int(sys.argv[1])
+length = int(sys.argv[2])
 
 with open("./output/output.text") as f:
 	data = f.read()
@@ -16,7 +17,7 @@ with open("./output/output.text") as f:
 data = data.split('\n')
 plt.plot(data[0:n])
 for i in range (1, (len(data)-1)/n):
-	plt.plot(data[i*length:(i+1)*n])
+	plt.plot(data[i*n:(i+1)*n])
 plt.savefig('./output/figure_all')
 
 print('done')

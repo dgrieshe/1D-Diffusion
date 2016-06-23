@@ -1,4 +1,4 @@
-#last edited by Miriam Rathbun on 6/18/2016
+#last edited by Miriam Rathbun on 6/22/2016
 #this script is run from reader.sh. It fills the A matrix which is the linear system of the discrete diffusion equations
 #this script can run multiple input files with restrictions
 
@@ -94,4 +94,27 @@ f.close()
 
 
 
+#This section experiments with dictionaries
+#I want to make the dictionary have a better/more complex structure
+#I also want to read the dictionary items in from input
+nuclides = {}
+nuclides['U-235']=[2, 3, 5]
+nuclides['U-238']=[4, 5, 5]                   
+nuclides['U-239']=[6, 7, 1]   
+
+nuclide_choice = raw_input("What nuclide would you like to know about? Choices are: U-235, U-238, U-239 : ")
+
+def read_nuclide_type(nuclides, nuclide_choice):
+	for nuclide, nuclide_type in nuclides.items():
+		if nuclide == nuclide_choice:
+			print("The nuclide %s has:\n"
+				"scattering xs = %s \n"
+				"absorbtion xs = %s \n"
+				"fission xs = %s" % (nuclide, nuclide_type[0], nuclide_type[1], nuclide_type[2]))
+
+read_nuclide_type(nuclides, nuclide_choice)
+
+#del nuclides['U-239']	
+#print("The nuclide %s " % 'U-235')
+#print("is %s" % nuclides['U-235'][0])
 

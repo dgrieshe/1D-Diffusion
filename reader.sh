@@ -1,33 +1,16 @@
 #!/bin/bash
 #not actually sure what this first line does, but it is necessary
-#last edited by Miriam Rathbun on 6/18/2016
-#script reads an input file of known structure. It loops through all .inp files present 
+#last edited by Miriam Rathbun on 7/2/2016
+#Loops through all .inp files present in the folder
 
 for f in `ls *.inp`
+#finds input files in the folder
 do
-   name=$f							#finds input files in the folder
+   name=$f
    echo $name
- 
-   #finds the line where the word "length" appears, and prints column 2 of that line
-   length=`awk '/length/{print $2}' $name`
-   rightBC=`awk '/rightBC/{print $2}' $name` 
-   leftBC=`awk '/leftBC/{print $2}' $name`
-   numgroups=`awk '/numgroups/{print $2}' $name`
-   numbins=`awk '/numbins/{print $2}' $name`
- 
-   i=1
-   let j=i+1
-   while [ $i -le $numbins ]; do
-	   let j=i+1
-	   let p=i-1
-       xs=`awk '/xs/{print $"'"$j"'"}' $name`
-       vector[$p]=$xs
-       let i=i+1
-   done
-
-python ./diffusion.py $length $rightBC $leftBC $numgroups $f $numbins ${vector[*]}
+python ./diffusion.py $f
 done
 
 
 #combines plots
-python ./plotter.py $numbins $length
+python ./plotter.py $f

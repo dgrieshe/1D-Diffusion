@@ -1,4 +1,4 @@
-#last edited by Miriam Rathbun on 6/18/2016
+#last edited by Miriam Rathbun on 7/2/2016
 #This script plots all of the ouput from vector_practice separate runs on one figure
 print('plotting all figures together >> figure_all.png')
 
@@ -6,10 +6,13 @@ print('plotting all figures together >> figure_all.png')
 import sys, os
 import matplotlib.pyplot as plt
 import numpy as np
+from diffOpts import *
 
-#variables from bash
-n = int(sys.argv[1])
-length = int(sys.argv[2])
+f = sys.argv[1]
+options=DiffusionOpts1D()
+options.read(f)
+n = options.numBins
+length = options.length
 
 with open("./output/output.text") as f:
 	data = f.read()

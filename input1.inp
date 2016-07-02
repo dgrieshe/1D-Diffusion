@@ -2,5 +2,4 @@ length 400
 rightBC escape 
 leftBC escape 
 numgroups 1
-numbins 20
-xs 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01
+numbins 10

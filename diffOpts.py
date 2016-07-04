@@ -1,3 +1,5 @@
+#last edited by Miriam Rathbun on 7/4/2016
+
 class DiffusionOpts1D:
 	
 	def __init__(self):

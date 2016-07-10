@@ -18,28 +18,25 @@ class Nuclide:
 			if keyword == 'name':
 				self.name = arguments
 				
+			elif keyword == 'totalXs':
+				self.totalXs = arguments
+				self.totalXs = float(self.totalXs)
+				
+			elif keyword == 'absXs':
+				self.absXs = arguments
+				self.absXs = float(self.absXs)
+				
+			elif keyword == 'fissXs':
+				self.fissXs = arguments
+				self.fissXs = float(self.fissXs)
+				
+			elif keyword == 'scatXs':
+				self.scatXs = arguments
+				self.scatXs = float(self.scatXs)
+				
 			else:
-				if keyword == 'totalXs':
-					self.totalXs = arguments
-					self.totalXs = float(self.totalXs)
-					
-				else:
-					if keyword == 'absXs':
-						self.absXs = arguments
-						self.absXs = float(self.absXs)
-						
-					else:
-						if keyword == 'fissXs':
-							self.fissXs = arguments
-							self.fissXs = float(self.fissXs)
-							
-						else:
-							if keyword == 'scatXs':
-								self.scatXs = arguments
-								self.scatXs = float(self.scatXs)
-								
-							else:
-								continue
+				continue
+				
                 
     	
         

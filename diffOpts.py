@@ -1,4 +1,4 @@
-#last edited by Miriam Rathbun on 7/4/2016
+#last edited by Miriam Rathbun on 7/9/2016
 
 class DiffusionOpts1D:
 	
@@ -16,18 +16,17 @@ class DiffusionOpts1D:
 				self.length = arguments
 				self.length = float(self.length)
 				
+			elif keyword == 'numgroups':
+				self.numGroups = arguments
+				self.numGroups = int(self.numGroups)
+				
+			elif keyword == 'numbins':
+				self.numBins = arguments
+				self.numBins = int(self.numBins)
+				
 			else:
-				if keyword == 'numgroups':
-					self.numGroups = arguments
-					self.numGroups = int(self.numGroups)
+				continue
 					
-				else:
-					if keyword == 'numbins':
-						self.numBins = arguments
-						self.numBins = int(self.numBins)
-						
-					else:
-						continue
 						
 		self.delta=self.length/self.numBins
 							

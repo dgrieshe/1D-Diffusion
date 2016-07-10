@@ -13,4 +13,4 @@ done
 
 
 #combines plots
-python ./plotter.py $f
+#python ./plotter.py $f

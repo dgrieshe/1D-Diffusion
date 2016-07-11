@@ -19,7 +19,7 @@ from diffOpts import *
 f = sys.argv[1]		
 options=DiffusionOpts1D()
 options.read(f)
-#j is the group number
+#j is the number of groups
 j=options.numGroups
 #retains only the number associated with the input file. Ex: "input1" becomes "1" 
 #This was made to make the output name nice
@@ -31,20 +31,14 @@ diff_coef=np.zeros(options.numBins*j)
                                           
 
     
-#creates slab half U-235 and half U-238
-for i in range(0,options.numBins*j):
-	M1=Nuclide('U235(1)') 
-	M2=Nuclide('U235(2)')                 
-	M1.read()
-	M2.read()                                
-	if i<options.numBins:
-		xs[i]=M1.absXs
-		diff_coef[i]=1/(3*M1.absXs)
-	else:
-		xs[i]=M2.absXs
-		diff_coef[i]=1/(3*M2.absXs)
-
-		
+#creates slab that's all U-235
+for k in range(1,j+1):
+	M= ('M%i' %k)
+	M=Nuclide('U235(%i)' %k)
+	M.read()
+	for i in range(options.numBins*(k-1),options.numBins*k):
+		xs[i]=M.absXs
+		diff_coef[i]=1/(3*M.absXs)
 			
 			
 	

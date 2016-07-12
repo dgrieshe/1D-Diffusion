@@ -24,10 +24,11 @@ j=options.numGroups
 #retains only the number associated with the input file. Ex: "input1" becomes "1" 
 #This was made to make the output name nice
 name = f[len(f)-5]		
-                     
+
+
 #cross sections for each bin.
-xs=np.zeros(options.numBins*j)
-diff_coef=np.zeros(options.numBins*j)      
+xs= []
+diff_coef=[]     
                                           
 
     
@@ -36,11 +37,11 @@ for k in range(1,j+1):
 	M= ('M%i' %k)
 	M=Nuclide('U235(%i)' %k)
 	M.read()
-	for i in range(options.numBins*(k-1),options.numBins*k):
-		xs[i]=M.absXs
-		diff_coef[i]=1/(3*M.absXs)
+	for i in range(0,options.numBins):
+		xs.append(M.absXs)
+		diff_coef.append(1/(3*M.absXs))
 			
-			
+		
 	
 	#if i<=options.numBins/2:
 	#	M=Nuclide('U235(%i)' % j)
@@ -61,21 +62,21 @@ source=[5]
 A=np.zeros((options.numBins*j,options.numBins*j)) 										
 B=np.zeros((options.numBins*j,1))																				
 	
-for row in range(0,options.numBins*j):
- for col in range(0,options.numBins*j):
- 	   if row == col:
- 	   	   if row == 0 or row == options.numBins or row == options.numBins-1 or row == options.numBins*j-1:
- 	   	   	   #this uses the ghost bin with delta=4 and diff_coef=1 
- 	   	   	   A[row,col]=2*diff_coef[row]*1/(options.delta*1/+4*diff_coef[row])+xs[row]*options.delta
- 	   	   else:
- 	   	   	   A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])+xs[row]*options.delta
- 	   else:                                                            
- 	   	   if col == row-1 and row != options.numBins:
- 	   	   	   A[row,col]=-2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])
- 	   	   else:
- 	   	   	   if col == row+1 and col != options.numBins:
- 	   	   	   	   A[row,col]=-2*diff_coef[col-1]*diff_coef[col]/(options.delta*diff_coef[col]+options.delta*diff_coef[col-1]) 
- B[row,0]=source[0]*options.delta	
+for k in range(1,j+1):
+		for row in range(options.numBins*(k-1),options.numBins*k):
+			for col in range(options.numBins*(k-1),options.numBins*k):
+				if row == col:
+					if row == options.numBins*(k-1) or row == options.numBins*k-1:
+						A[row,col]=2*diff_coef[row]*1/(options.delta*1/+4*diff_coef[row])+xs[row]*options.delta
+					else:
+						A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])+xs[row]*options.delta
+				else:
+					if col == row-1:
+						A[row,col]=-2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])
+					else:
+						if col == row+1:
+							A[row,col]=-2*diff_coef[col-1]*diff_coef[col]/(options.delta*diff_coef[col]+options.delta*diff_coef[col-1]) 
+			B[row,0]=source[0]*options.delta	
 ###############################################################################   
 
 
@@ -84,26 +85,18 @@ for row in range(0,options.numBins*j):
 #calculating the solution x to Ax=B
 Ainv=np.linalg.inv(A)
 x=np.dot(Ainv,B)
+
+for k in range(1,j+1):
+	l=0
+	x_group= np.zeros(options.numBins)
+	for i in range(options.numBins*(k-1),options.numBins*k):
+		x_group[l]=x[i]
+		l=l+1
+	plt.plot(x_group)
+	plt.ylabel('flux')
+	plt.savefig('./output/figure'+name)
+
 ###############################################################################
-  
 
 
-###############################################################################
-#plotting solution x
-plt.plot(x)
-plt.ylabel('flux')
-plt.savefig('./output/figure'+name)
-
-if name=='1' and j==1:
-    f = open('./output/output.text', 'w')
-    f.close()
-
-f = open('./output/output.text', 'a')
-
-i=0
-while i < options.numBins:
-   print >> f, float(x[i])
-   i = i+1
-f.close()
-###############################################################################
                

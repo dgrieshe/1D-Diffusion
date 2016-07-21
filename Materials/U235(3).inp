@@ -1,5 +1,8 @@
 name U235
-totalXs 10.1
-absXs 0.1
-fissXs 5
-scatXs 5
+totalXs 0.115
+absXs 0.01
+fissXs 0.1
+scatXs 0.05
+scatXs1 0.0
+scatXs2 0.0
+scatXs3 0.05

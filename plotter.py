@@ -12,6 +12,7 @@ class Plotter:
 		import numpy as np
 		import matplotlib.pyplot as plt
 		plt.clf()
+		groups=[]
 		for k in range(1,numGroups+1):
 			l=0
 			x_group= np.zeros(numBins)
@@ -19,8 +20,12 @@ class Plotter:
 				x_group[l]=solution[i]
 				l=l+1
 				
-			plt.plot(x_group)
+			
+			groups.append('group%i' %k)
+			colors=['r','b','g','o','n','p']	
+			groups[k-1], = plt.plot(x_group, colors[k-1], label=groups[k-1])
 			plt.ylabel('flux')
+			plt.legend(groups)
 			plt.savefig('./output/figure'+name)
 	
 	

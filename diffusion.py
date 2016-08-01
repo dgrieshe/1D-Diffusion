@@ -59,7 +59,7 @@ for f in fn.listfn:
     		
     #arbitrary source constant source term  		
 		
-	source[1]=0.1
+	source[10]=0.1
 	#for i in range(0,len(source)):
 	#	source[i]=0.1
 	
@@ -71,20 +71,20 @@ for f in fn.listfn:
 	B=np.zeros((options.numBins*options.numGroups,1))
 	
 
-	
 	for k in range(1,options.numGroups+1):
 		for row in range(options.numBins*(k-1),options.numBins*k):
 			for col in range(options.numBins*(k-1),options.numBins*k):
 				if row == col:
-					if row == options.numBins*(k-1) or row == options.numBins*k-1:
-						A[row,col]=2*diff_coef[row]*1/(options.delta*1/+4*diff_coef[row])+xs[row]*options.delta
+					if row == options.numBins*(k-1):
+						A[row,col]=2*diff_coef[row]/(options.delta*1+4*diff_coef[row])+xs[row]*options.delta #+2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])
+					elif row == options.numBins*k-1:
+						A[row,col]=2*diff_coef[row]/(options.delta*1+4*diff_coef[row])+xs[row]*options.delta #+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])
 					else:
 						A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])+xs[row]*options.delta
 				elif col == row-1:
 					A[row,col]=-2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])
 				elif col == row+1:
 					A[row,col]=-2*diff_coef[col-1]*diff_coef[col]/(options.delta*diff_coef[col]+options.delta*diff_coef[col-1]) 
-			#B[row,0]=source[0]*options.delta
 		for row in range(options.numBins,options.numBins*options.numGroups):
 			for col in range(0,options.numBins*options.numGroups):
 				if row == col+options.numBins*k:
@@ -100,22 +100,8 @@ for f in fn.listfn:
 #calculating the solution x to Ax=B   
 	Ainv=np.linalg.inv(A)
 	x=np.dot(Ainv,B)
-	#print x
-	
+	print x[0]
 
-	#verification
-	b=np.zeros(len(B))
-	c=np.zeros(len(B))
-	#print np.matrix.transpose(B)
-	#print np.matrix.transpose(b)
-	for row in range(0,len(B)):
-		for col in range(0,len(B)):
-			c[col]=A[row,col]*x[col]
-		b[row]=sum(c)
-	for i in range(0,len(B)):
-		if abs(B[i]-b[i])>1e-9:
-			print i
-			print B[i]-b[i]
 	
 	results=Plotter()
 	results.plot(x,1,options.numBins,options.numGroups,name)

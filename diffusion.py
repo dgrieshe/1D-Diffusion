@@ -1,12 +1,12 @@
-#last edited by Miriam Rathbun on 7/18/2016
+#last edited by Miriam Rathbun on 8/3/2016
 #This script solves the discrete diffusion equations
-#this script can run multiple input files with restrictions
 
 
 
 #imports
 #use sudo apt-get install python.numpy if needed
-import numpy as np    
+import numpy as np   
+import random
 from nuclide import *
 from diffOpts import *
 from plotter import * 
@@ -32,8 +32,13 @@ for f in fn.listfn:
 	diff_coef=[]
 	source=np.zeros(options.numBins*options.numGroups)
 	scat=np.zeros((options.numGroups,options.numGroups))
+	sourceGroup=[]
+	
+###############################################################################	
 	
 	#creates slab that's all U-235
+	#loops through the groups
+	#this section also fills other items which depend on groups, see below
 	for k in range(1,options.numGroups+1):
 		M= ('M%i' %k)
 		M=Nuclide('U235(%i)' %k)
@@ -41,10 +46,19 @@ for f in fn.listfn:
 		for i in range(0,options.numBins):
 			xs.append(M.totalXs)
 			diff_coef.append(1/(3*(M.totalXs-u_g*M.scatXs)))
+			
+		#fills the transition matrix/scattering kernel
 		for j in range(0,options.numGroups):
 			scat[j,k-1]=eval('M.scatXs%i' %(j+1))
 			
+		#creates a list of possible groups for the fission source
+		#more entries for groups of higher fission Xs	
+		for j in range(0,int(1000*M.fissXs)):
+			sourceGroup.append(k)
 			
+###############################################################################
+
+		#previous code to make a half-slab of U235 and U238
 				
     	#if i<=options.numBins/2:
     	#	M=Nuclide('U235(%i)' % j)
@@ -56,12 +70,19 @@ for f in fn.listfn:
     	#	M.read()
     	#	xs[i]= M.absXs                                       
     	#	diff_coef[i]=1/(3*M.absXs)       
-    		
-    #arbitrary source constant source term  		
-		
-	source[10]=0.1
-	#for i in range(0,len(source)):
-	#	source[i]=0.1
+    	
+###############################################################################
+    	
+    #assigns arbitrary source location  
+	numSources=1 #random.randint(1,options.numBins-1)
+	for i in range(0, numSources):
+		randGroup = random.choice(sourceGroup)
+		randIndex = random.randint(options.numBins*(randGroup-1),options.numBins*(randGroup))
+		source[randIndex]=0.1
+	fo = open('output/sources','a+')
+	number=randIndex-800*(randGroup-1)
+	fo.write("%i, %i\n" %(randGroup,randIndex-800*(randGroup-1)))
+	fo.close()
 	
 ###############################################################################
 #Filling matrices A (linear system of diffusion equations) and B (source)
@@ -166,13 +187,13 @@ for f in fn.listfn:
                         for col in range(options.numBins*(k-1),options.numBins*k):
                                 if row == col:
                                         if row == options.numBins*(k-1):
-                                                A[row,col]=2*diff_coef[row]/(options.delta*1+4*diff_coef[row])+xs[row]*options.delta+2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])-scat[k-1,k-1]
+                                                A[row,col]=2*diff_coef[row]/(options.delta*1+4*diff_coef[row])+xs[row]*options.delta+2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])-scat[k-1,k-1]*options.delta
                                                 #print(row, col, A[row,col])
                                         elif row == options.numBins*k-1:
-                                                A[row,col]=2*diff_coef[row]/(options.delta*1+4*diff_coef[row])+xs[row]*options.delta+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])-scat[k-1,k-1]
+                                                A[row,col]=2*diff_coef[row]/(options.delta*1+4*diff_coef[row])+xs[row]*options.delta+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])-scat[k-1,k-1]*options.delta
                                                 #print(row, col, A[row,col])
                                         else:
-                                                A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])+xs[row]*options.delta-scat[k-1,k-1]
+                                                A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])+xs[row]*options.delta-scat[k-1,k-1]*options.delta
                                                 #print(row, col, A[row,col])
                                 elif col == row-1:
                                         A[row,col]=-2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])
@@ -196,10 +217,9 @@ for f in fn.listfn:
 #calculating the solution x to Ax=B   
 	Ainv=np.linalg.inv(A)
 	x=np.dot(Ainv,B)
-	print x[0]
 
 	
-	results=Plotter()
-	results.plot(x,1,options.numBins,options.numGroups,name)
+	#results=Plotter()
+	#results.plot(x,1,options.numBins,options.numGroups,name)
     
 ###############################################################################

@@ -5,7 +5,7 @@ class Construct:
 	def __init__(self):
 		self
 		
-	def constructA(self, options, diff_coef, scat, xs):
+	def constructA(self, options, diff_coef, scat, xs, nDensity):
 		import numpy as np
 		
 		nGrps=options.numGroups
@@ -18,19 +18,24 @@ class Construct:
 				for col in range(nBins*(k-1),nBins*k):
 					if row == col:
 						if row == nBins*(k-1):
-							self.A[row,col]=2*diff_coef[row]/(options.delta*1+4*diff_coef[row])+xs[row]*options.delta+2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])-scat[k-1,k-1]*options.delta 
+							self.A[row,col]=2*diff_coef[row]/(delta*1+4*diff_coef[row])+xs[row]*delta+2*diff_coef[row]*diff_coef[row+1]/(delta*diff_coef[row+1]+delta*diff_coef[row])-scat[k-1,k-1]*nDensity[row-nBins*(k-1),0]*delta 
 						elif row == nBins*k-1:
-							self.A[row,col]=2*diff_coef[row]/(options.delta*1+4*diff_coef[row])+xs[row]*options.delta+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])-scat[k-1,k-1]*options.delta
+							self.A[row,col]=2*diff_coef[row]/(delta*1+4*diff_coef[row])+xs[row]*delta+2*diff_coef[row-1]*diff_coef[row]/(delta*diff_coef[row]+delta*diff_coef[row-1])-scat[k-1,k-1]*nDensity[row-nBins*(k-1),0]*delta
 						else:
-							self.A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(options.delta*diff_coef[row+1]+options.delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])+xs[row]*options.delta-scat[k-1,k-1]*options.delta
+							self.A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(delta*diff_coef[row+1]+delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(delta*diff_coef[row]+delta*diff_coef[row-1])+xs[row]*delta-scat[k-1,k-1]*nDensity[row-nBins*(k-1),0]*delta
 					elif col == row-1:
-						self.A[row,col]=-2*diff_coef[row-1]*diff_coef[row]/(options.delta*diff_coef[row]+options.delta*diff_coef[row-1])
+						self.A[row,col]=-2*diff_coef[row-1]*diff_coef[row]/(delta*diff_coef[row]+delta*diff_coef[row-1])
 					elif col == row+1:
-						self.A[row,col]=-2*diff_coef[col-1]*diff_coef[col]/(options.delta*diff_coef[col]+options.delta*diff_coef[col-1]) 
+						self.A[row,col]=-2*diff_coef[col-1]*diff_coef[col]/(delta*diff_coef[col]+delta*diff_coef[col-1]) 
 			for row in range(nBins,nBins*nGrps):
 				for col in range(0,nBins*nGrps):
 					if row == col+nBins*k:
-						self.A[row,col]=-scat[k,k-1]
+						A=row-nBins*k
+						i=2
+						while A >= nBins:
+							A=row-nBins*k*i
+							i=i+1
+						self.A[row,col]=-scat[k,k-1]*nDensity[A,0]
 						
 	def invertA(self):
 		import numpy as np

@@ -1,4 +1,4 @@
-#last edited by Miriam Rathbun on 8/3/2016
+#last edited by Miriam Rathbun on 8/15/2016
 #This script solves the discrete diffusion equations
 
 
@@ -32,8 +32,10 @@ for f in fn.listfn:
 	total_xs=[]
 	scat_xs=[]
 	diff_coef=[]
-	#diff_coef=np.zeros(options.numBins*options.numGroups)
-	#print len(diff_coef)
+	numDensity=np.zeros((options.numBins,3))
+	numDensity[:,0]=1 #2.3*10**22
+	numDensity[:,1]=1 #3.5*10**22
+	numDensity[:,2]=1 #3*10**23
 	source=np.zeros(options.numBins*options.numGroups)
 	scat=np.zeros((options.numGroups,options.numGroups))
 	sourceGroup=[]
@@ -47,14 +49,14 @@ for f in fn.listfn:
 		M=Nuclide('U235(%i)' %k)
 		M.read()
 		for i in range(0,options.numBins):
-			total_xs.append(M.totalXs)
-			scat_xs.append(M.scatXs)
+			total_xs.append(M.totalXs*numDensity[i,0])
+			scat_xs.append(M.scatXs*numDensity[i,0])
 		for i in range(0,options.numBins):
 			diff_coef.append(1/(3*(total_xs[i]-u_g*scat_xs[i])))
 			
 		#fills the transition matrix/scattering kernel
 		for j in range(0,options.numGroups):  
-			scat[j,k-1]=eval('M.scatXs%i' %(j+1))  
+			scat[j,k-1]=eval('M.scatXs%i' %(j+1))
 			
 ###############################################################################
 
@@ -76,21 +78,28 @@ for f in fn.listfn:
 
 
 	n=0
-	while n<2:
+	while n<3:
 		
 		if n !=0:
-			for i in range(0,len(total_xs)):
-				total_xs[i]=total_xs[i]/2
-				scat_xs[i]=scat_xs[i]/2
-				diff_coef[i]=diff_coef[i]/2
-			for k in range(1,options.numGroups+1):
-				for j in range(0,options.numGroups):
-					scat[j,k-1]=scat[j,k-1]/2
+			for i in range(0,options.numBins):
+				total_xs[i]=total_xs[i]/numDensity[i,0]
+				scat_xs[i]=scat_xs[i]/numDensity[i,0]
+			for i in range(0,options.numBins):
+				for j in range(0,3):
+					numDensity[i,j]=numDensity[i,j]/2
+			for i in range(0,options.numBins):
+				total_xs[i]=total_xs[i]*numDensity[i,0]
+				scat_xs[i]=scat_xs[i]*numDensity[i,0]
+				diff_coef[i]=(1/(3*(total_xs[i]-u_g*scat_xs[i]))) 
+			#the scattering kernel gets multiplied by numDensity in constructA
+            #for k in range(1,options.numGroups+1):
+			#	for j in range(0,options.numGroups):
+			#		scat[j,k-1]=scat[j,k-1]/2
 		n=n+1
 		
 		#Builds the linear system of equations
 		A=Construct()
-		A.constructA(options, diff_coef, scat, total_xs)
+		A.constructA(options, diff_coef, scat, total_xs, numDensity)
 		
 		
 		#sets the initial value of the source

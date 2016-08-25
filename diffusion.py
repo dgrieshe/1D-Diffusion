@@ -12,9 +12,13 @@ from plotter import *
 from GetFileName import *
 from solver import *
 from Construct import *
+from new_nuclide import *
 
 fn=FileName()
 fn.GetFileName()
+N=Nuclides()
+N.read()
+print N.data['fuel']
 
 for f in fn.listfn:
 	print f
@@ -57,21 +61,7 @@ for f in fn.listfn:
 		#fills the transition matrix/scattering kernel
 		for j in range(0,options.numGroups):  
 			scat[j,k-1]=eval('M.scatXs%i' %(j+1))
-			
-###############################################################################
-
-		#previous code to make a half-slab of U235 and U238
-				
-    	#if i<=options.numBins/2:
-    	#	M=Nuclide('U235(%i)' % j)
-    	#	M.read()
-    	#	xs[i]= M.absXs                                  
-    	#	diff_coef[i]=1/(3*M.absXs)
-    	#else:
-    	#	M= Nuclide('U238(%i)' %j)
-    	#	M.read()
-    	#	xs[i]= M.absXs                                       
-    	#	diff_coef[i]=1/(3*M.absXs)       
+			      
     	
 	
 ###############################################################################

@@ -42,12 +42,6 @@ for f in fn.listfn:
 	fuel_totXS=[]
 	fuel_scatXS=[]
 	fuel_DC=[]
-	mod_totXS=[]
-	mod_scatXS=[]
-	mod_DC=[]
-	pois_totXS=[]
-	pois_scatXS=[]
-	pois_DC=[]
 	
 	
 	numDensity=np.zeros((options.numBins,3))
@@ -63,9 +57,8 @@ for f in fn.listfn:
 	
 #create slab that's all U-235
 #loop through the groups
-#fill other items which depend on groups, see below 
+#fill other items that depend on groups
 
-    
 
 	for k in range(1,options.numGroups+1):
 		for i in range(0,options.numBins):

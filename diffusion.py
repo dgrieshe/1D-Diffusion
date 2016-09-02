@@ -93,10 +93,7 @@ for f in fn.listfn:
 				fuel_totXS[i]=fuel_totXS[i]*numDensity[i,0]
 				fuel_scatXS[i]=fuel_scatXS[i]*numDensity[i,0]
 				diffcoef[i]=(1/(3*(fuel_totXS[i]-u_g*fuel_scatXS[i]))) 
-#the scattering kernel gets multiplied by numDensity in constructA
-#for k in range(1,options.numGroups+1):
-#	for j in range(0,options.numGroups):
-#		scat[j,k-1]=scat[j,k-1]/2
+
 		n=n+1
 		
 		#Builds the linear system of equations

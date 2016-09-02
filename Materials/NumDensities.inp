@@ -1,5 +1,5 @@
 material
-fuel 0.02
-moderator 0.05
-poison 0.001
+fuel 2.3
+moderator 3.2
+poison 3
 end

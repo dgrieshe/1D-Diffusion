@@ -23,6 +23,14 @@ for f in fn.listfn:
 	#This was made to make the output name nice
 	name = f[len(f)-5]
 	
+	#read input
+	options=DiffusionOpts1D()
+	options.read(f)
+	
+	M=Material()
+	M.read()
+	M.calc_macro()
+	
 	#variables
 	u_g=0.33
 	
@@ -41,15 +49,7 @@ for f in fn.listfn:
 	pois_scatXS=[]
 	pois_DC=[]
 	
-	#read input
-	options=DiffusionOpts1D()
-	options.read(f)
 	
-	M=Material()
-	M.read()
-	M.calc_macro()
-	
-	diff_coef=[]
 	numDensity=np.zeros((options.numBins,3))
 	numDensity[:,0]=M.NDfuel
 	numDensity[:,1]=M.NDmod
@@ -75,11 +75,8 @@ for f in fn.listfn:
 			fisXS.append(M.data['fuel']['fisXs'][k]+M.data['moderator']['fisXs'][k]+M.data['poison']['fisXs'][k])
 			fuel_totXS.append(M.data['fuel']['totXs'][k])
 			fuel_scatXS.append(M.data['fuel']['scatXs'][k])
-			mod_totXS.append(M.data['moderator']['totXs'][k])
-			mod_scatXS.append(M.data['moderator']['scatXs'][k])
-			pois_totXS.append(M.data['poison']['totXs'][k])
-			pois_scatXS.append(M.data['poison']['scatXs'][k])
-			diff_coef.append(1/(3*(fuel_totXS[i]-u_g*fuel_scatXS[i])))
+			
+			diffcoef.append(1/(3*(fuel_totXS[i]-u_g*fuel_scatXS[i])))
 			
 		#fills the transition matrix/scattering kernel
 		for j in range(0,options.numGroups):
@@ -101,7 +98,7 @@ for f in fn.listfn:
 			for i in range(0,options.numBins):
 				fuel_totXS[i]=fuel_totXS[i]*numDensity[i,0]
 				fuel_scatXS[i]=fuel_scatXS[i]*numDensity[i,0]
-				diff_coef[i]=(1/(3*(fuel_totXS[i]-u_g*fuel_scatXS[i]))) 
+				diffcoef[i]=(1/(3*(fuel_totXS[i]-u_g*fuel_scatXS[i]))) 
 #the scattering kernel gets multiplied by numDensity in constructA
 #for k in range(1,options.numGroups+1):
 #	for j in range(0,options.numGroups):
@@ -110,7 +107,7 @@ for f in fn.listfn:
 		
 		#Builds the linear system of equations
 		A=Construct()
-		A.constructA(options, diff_coef, scat, fuel_totXS, numDensity)
+		A.constructA(options, diffcoef, scat, fuel_totXS, numDensity)
 		
 		
 		#sets the initial value of the source

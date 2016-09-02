@@ -1,5 +1,7 @@
 #class created to construct linear system of equations
 
+from material import *
+
 class Construct:
 	
 	def __init__(self):
@@ -7,12 +9,17 @@ class Construct:
 		
 	def constructA(self, options, diff_coef, scat, xs, nDensity):
 		import numpy as np
+		M=Material()
+		M.read()
+		M.calc_macro()
+
 		
 		nGrps=options.numGroups
 		nBins=options.numBins
 		delta=options.delta
 		self.A=np.zeros((nBins*nGrps,nBins*nGrps))
-		
+
+
 		for k in range(1,nGrps+1):
 			for row in range(nBins*(k-1),nBins*k):
 				for col in range(nBins*(k-1),nBins*k):

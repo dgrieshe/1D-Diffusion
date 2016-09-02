@@ -1,5 +1,5 @@
 length 400
 rightBC escape 
 leftBC escape 
-numgroups 3
-numbins 800
+numgroups 2
+numbins 100

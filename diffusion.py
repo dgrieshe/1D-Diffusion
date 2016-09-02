@@ -80,7 +80,8 @@ for f in fn.listfn:
 			
 		#fills the transition matrix/scattering kernel
 		for j in range(0,options.numGroups):
-			scat[j,k-1]=M.data['fuel']['Ex'+str(j+1)][k]	
+			scat[j,k-1]=M.data['fuel']['Ex'+str(j+1)][k] #+M.data['moderator']['Ex'+str(j+1)][k]+M.data['poison']['Ex'+str(j+1)][k]
+			#adding these moderator and poison values makes it unstable
 			      
 ###############################################################################
 

@@ -42,9 +42,6 @@ for f in fn.listfn:
 	
 	
 	numDensity=np.zeros((options.numBins,3))
-	numDensity[:,0]=M.NDfuel
-	numDensity[:,1]=M.NDmod
-	numDensity[:,2]=M.NDpoison
 	source=np.zeros(options.numBins*options.numGroups)
 	scat=np.zeros((options.numGroups,options.numGroups))
 	sourceGroup=[]

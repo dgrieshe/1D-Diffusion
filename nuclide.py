@@ -37,24 +37,24 @@ class Nuclides:
     			self.Gscat=np.zeros((self.nGroups,self.nGroups))
     			
     		elif keyword == 'totalXs':
-    			self.totXs=[]
+    			self.totXS=[]
     			for i in range(1,self.nGroups+1):
-    				self.totXs.append(float(line.split(' ',self.nGroups)[i]))
+    				self.totXS.append(float(line.split(' ',self.nGroups)[i]))
     				
     		elif keyword == 'absorptionXs':
-    			self.absXs=[]
+    			self.absXS=[]
     			for i in range(1,self.nGroups+1):
-    				self.absXs.append(float(line.split(' ',self.nGroups)[i]))
+    				self.absXS.append(float(line.split(' ',self.nGroups)[i]))
     				
     		elif keyword == 'fissionXs':
-    			self.fisXs=[]
+    			self.fisXS=[]
     			for i in range(1,self.nGroups+1):
-    				self.fisXs.append(float(line.split(' ',self.nGroups)[i]))
+    				self.fisXS.append(float(line.split(' ',self.nGroups)[i]))
     			
     		elif keyword == 'scatterXs':
-    			self.scatXs=[]
+    			self.scatXS=[]
     			for i in range(1,self.nGroups+1):
-    				self.scatXs.append(float(line.split(' ',self.nGroups)[i]))
+    				self.scatXS.append(float(line.split(' ',self.nGroups)[i]))
     			
     		elif keyword[:-1] == 'Gscat':  
     			for i in range(0, self.nGroups):
@@ -66,17 +66,17 @@ class Nuclides:
     			n=0
     			self.d = {
     				self.name: {
-    					'totXs' : {},
-    					'absXs' : {},
-    					'fisXs' : {},
-    					'scatXs': {},
+    					'totXS' : {},
+    					'absXS' : {},
+    					'fisXS' : {},
+    					'scatXS': {},
     				},
     			}
     			for i in range(1, self.nGroups+1):
-    				self.d[self.name]['totXs'][i]=self.totXs[i-1]
-    				self.d[self.name]['absXs'][i]=self.absXs[i-1]
-    				self.d[self.name]['fisXs'][i]=self.fisXs[i-1]
-    				self.d[self.name]['scatXs'][i]=self.scatXs[i-1]
+    				self.d[self.name]['totXS'][i]=self.totXS[i-1]
+    				self.d[self.name]['absXS'][i]=self.absXS[i-1]
+    				self.d[self.name]['fisXS'][i]=self.fisXS[i-1]
+    				self.d[self.name]['scatXS'][i]=self.scatXS[i-1]
     				self.d[self.name]['Ex'+str(i)]={}
     				for j in range(1,self.nGroups+1):
     					self.d[self.name]['Ex'+str(i)][j]=self.Gscat[i-1,j-1]

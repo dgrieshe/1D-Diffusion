@@ -23,7 +23,7 @@ for f in fn.listfn:
 	#This was made to make the output name nice
 	name = f[len(f)-5]
 	
-	#read input
+	#read input and calculate macroscopic cross sections
 	options=DiffusionOpts1D()
 	options.read(f)
 	
@@ -39,9 +39,6 @@ for f in fn.listfn:
 	scatXS=[]
 	fisXS=[]
 	diffcoef=[]
-	fuel_totXS=[]
-	fuel_scatXS=[]
-	fuel_DC=[]
 	
 	
 	numDensity=np.zeros((options.numBins,3))
@@ -55,25 +52,21 @@ for f in fn.listfn:
 	
 ###############################################################################	
 	
-#create slab that's all U-235
-#loop through the groups
-#fill other items that depend on groups
-
+#create slab and assign each bin its cross section by energy group
 
 	for k in range(1,options.numGroups+1):
 		for i in range(0,options.numBins):
-			totXS.append(M.data['fuel']['totXs'][k]+M.data['moderator']['totXs'][k]+M.data['poison']['totXs'][k])
-			scatXS.append(M.data['fuel']['scatXs'][k]+M.data['moderator']['scatXs'][k]+M.data['poison']['scatXs'][k])
-			absXS.append(M.data['fuel']['absXs'][k]+M.data['moderator']['absXs'][k]+M.data['poison']['absXs'][k])
-			fisXS.append(M.data['fuel']['fisXs'][k]+M.data['moderator']['fisXs'][k]+M.data['poison']['fisXs'][k])
-			fuel_totXS.append(M.data['fuel']['totXs'][k])
-			fuel_scatXS.append(M.data['fuel']['scatXs'][k])
+			totXS.append(M.data['fuel']['totXS'][k]+M.data['moderator']['totXS'][k]+M.data['poison']['totXS'][k])
+			scatXS.append(M.data['fuel']['scatXS'][k]+M.data['moderator']['scatXS'][k]+M.data['poison']['scatXS'][k])
+			absXS.append(M.data['fuel']['absXS'][k]+M.data['moderator']['absXS'][k]+M.data['poison']['absXS'][k])
+			fisXS.append(M.data['fuel']['fisXS'][k]+M.data['moderator']['fisXS'][k]+M.data['poison']['fisXS'][k])
 			
-			diffcoef.append(1/(3*(fuel_totXS[i]-u_g*fuel_scatXS[i])))
+			diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
 			
+
 		#fills the transition matrix/scattering kernel
 		for j in range(0,options.numGroups):
-			scat[j,k-1]=M.data['fuel']['Ex'+str(j+1)][k] #+M.data['moderator']['Ex'+str(j+1)][k]+M.data['poison']['Ex'+str(j+1)][k]
+			scat[j,k-1]=M.data['fuel']['Ex'+str(j+1)][k]+M.data['moderator']['Ex'+str(j+1)][k]+M.data['poison']['Ex'+str(j+1)][k]
 			#adding these moderator and poison values makes it unstable
 			      
 ###############################################################################
@@ -84,21 +77,15 @@ for f in fn.listfn:
 		
 		if n !=0:
 			for i in range(0,options.numBins):
-				fuel_totXS[i]=fuel_totXS[i]/numDensity[i,0]
-				fuel_scatXS[i]=fuel_scatXS[i]/numDensity[i,0]
-			for i in range(0,options.numBins):
-				for j in range(0,3):
-					numDensity[i,j]=numDensity[i,j]/2
-			for i in range(0,options.numBins):
-				fuel_totXS[i]=fuel_totXS[i]*numDensity[i,0]
-				fuel_scatXS[i]=fuel_scatXS[i]*numDensity[i,0]
-				diffcoef[i]=(1/(3*(fuel_totXS[i]-u_g*fuel_scatXS[i]))) 
+				totXS[i]=totXS[i]/2
+				scatXS[i]=scatXS[i]/2
+				diffcoef[i]=(1/(3*(totXS[i]-u_g*scatXS[i]))) 
 
 		n=n+1
 		
 		#Builds the linear system of equations
 		A=Construct()
-		A.constructA(options, diffcoef, scat, fuel_totXS, numDensity)
+		A.constructA(options, diffcoef, scat, totXS, numDensity)
 		
 		
 		#sets the initial value of the source

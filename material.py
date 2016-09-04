@@ -3,7 +3,7 @@
 #macroscipic cross section data by multiplying by 
 #number densities read from an input file
 
-from new_nuclide import *
+from nuclide import *
 
 class Material:
 	
@@ -44,22 +44,22 @@ class Material:
 		N.read()
 		self.data=N.data
 		for i in range(1, N.nGroups+1):
-			self.data['fuel']['totXs'][i]=N.data['fuel']['totXs'][i]*self.NDfuel
-			self.data['fuel']['absXs'][i]=N.data['fuel']['absXs'][i]*self.NDfuel
-			self.data['fuel']['fisXs'][i]=N.data['fuel']['fisXs'][i]*self.NDfuel
-			self.data['fuel']['scatXs'][i]=N.data['fuel']['scatXs'][i]*self.NDfuel
-			self.data['moderator']['totXs'][i]=N.data['fuel']['totXs'][i]*self.NDmod
-			self.data['moderator']['absXs'][i]=N.data['fuel']['absXs'][i]*self.NDmod
-			self.data['moderator']['fisXs'][i]=N.data['fuel']['fisXs'][i]*self.NDmod
-			self.data['moderator']['scatXs'][i]=N.data['fuel']['scatXs'][i]*self.NDmod
-			self.data['poison']['totXs'][i]=N.data['fuel']['totXs'][i]*self.NDpoison
-			self.data['poison']['absXs'][i]=N.data['fuel']['absXs'][i]*self.NDpoison
-			self.data['poison']['fisXs'][i]=N.data['fuel']['fisXs'][i]*self.NDpoison
-			self.data['poison']['scatXs'][i]=N.data['fuel']['scatXs'][i]*self.NDpoison
+			self.data['fuel']['totXS'][i]=N.data['fuel']['totXS'][i]*self.NDfuel
+			self.data['fuel']['absXS'][i]=N.data['fuel']['absXS'][i]*self.NDfuel
+			self.data['fuel']['fisXS'][i]=N.data['fuel']['fisXS'][i]*self.NDfuel
+			self.data['fuel']['scatXS'][i]=N.data['fuel']['scatXS'][i]*self.NDfuel
+			self.data['moderator']['totXS'][i]=N.data['moderator']['totXS'][i]*self.NDmod
+			self.data['moderator']['absXS'][i]=N.data['moderator']['absXS'][i]*self.NDmod
+			self.data['moderator']['fisXS'][i]=N.data['moderator']['fisXS'][i]*self.NDmod
+			self.data['moderator']['scatXS'][i]=N.data['moderator']['scatXS'][i]*self.NDmod
+			self.data['poison']['totXS'][i]=N.data['poison']['totXS'][i]*self.NDpoison
+			self.data['poison']['absXS'][i]=N.data['poison']['absXS'][i]*self.NDpoison
+			self.data['poison']['fisXS'][i]=N.data['poison']['fisXS'][i]*self.NDpoison
+			self.data['poison']['scatXS'][i]=N.data['poison']['scatXS'][i]*self.NDpoison
 			for j in range(1,N.nGroups+1):
-    					self.data['fuel']['Ex'+str(i)][j]=N.data['fuel']['Ex'+str(i)][j]*self.NDfuel
-    					self.data['moderator']['Ex'+str(i)][j]=N.data['moderator']['Ex'+str(i)][j]*self.NDmod
-    					self.data['poison']['Ex'+str(i)][j]=N.data['poison']['Ex'+str(i)][j]*self.NDpoison
-    		
+				self.data['fuel']['Ex'+str(i)][j]=N.data['fuel']['Ex'+str(i)][j]*self.NDfuel
+				self.data['moderator']['Ex'+str(i)][j]=N.data['moderator']['Ex'+str(i)][j]*self.NDmod
+				self.data['poison']['Ex'+str(i)][j]=N.data['poison']['Ex'+str(i)][j]*self.NDpoison
+
     			
     	

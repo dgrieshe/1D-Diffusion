@@ -1,15 +1,18 @@
 # class containing material object. Replaces all the 
 #microscopic cross section data from Nuclides with
-#macroscipic cross section data by multiplying by 
+#macroscopic cross section data by multiplying by 
 #number densities read from an input file
 
+import numpy as np
 from nuclide import *
 
-class Material:
+class Material():
+	
+###############################################################
 	
 	def __init__(self):
 		self
-		
+###############################################################		
 		
 	def read(self):
 		inpFile = open('Materials/NumDensities.inp','r')
@@ -38,28 +41,23 @@ class Material:
 					
 				elif keyword == 'poison':
 					self.NDpoison = float(arguments)
-					
-	def calc_macro(self):
-		N=Nuclides()
-		N.read()
-		self.data=N.data
-		for i in range(1, N.nGroups+1):
-			self.data['fuel']['totXS'][i]=N.data['fuel']['totXS'][i]*self.NDfuel
-			self.data['fuel']['absXS'][i]=N.data['fuel']['absXS'][i]*self.NDfuel
-			self.data['fuel']['fisXS'][i]=N.data['fuel']['fisXS'][i]*self.NDfuel
-			self.data['fuel']['scatXS'][i]=N.data['fuel']['scatXS'][i]*self.NDfuel
-			self.data['moderator']['totXS'][i]=N.data['moderator']['totXS'][i]*self.NDmod
-			self.data['moderator']['absXS'][i]=N.data['moderator']['absXS'][i]*self.NDmod
-			self.data['moderator']['fisXS'][i]=N.data['moderator']['fisXS'][i]*self.NDmod
-			self.data['moderator']['scatXS'][i]=N.data['moderator']['scatXS'][i]*self.NDmod
-			self.data['poison']['totXS'][i]=N.data['poison']['totXS'][i]*self.NDpoison
-			self.data['poison']['absXS'][i]=N.data['poison']['absXS'][i]*self.NDpoison
-			self.data['poison']['fisXS'][i]=N.data['poison']['fisXS'][i]*self.NDpoison
-			self.data['poison']['scatXS'][i]=N.data['poison']['scatXS'][i]*self.NDpoison
-			for j in range(1,N.nGroups+1):
-				self.data['fuel']['Ex'+str(i)][j]=N.data['fuel']['Ex'+str(i)][j]*self.NDfuel
-				self.data['moderator']['Ex'+str(i)][j]=N.data['moderator']['Ex'+str(i)][j]*self.NDmod
-				self.data['poison']['Ex'+str(i)][j]=N.data['poison']['Ex'+str(i)][j]*self.NDpoison
 
-    			
+###############################################################
+					
+	def updateNDarray(self,nBins,n):
+		if n==0:
+			self.NDarray=np.zeros((nBins,3))
+			for i in range(0,nBins):
+				self.NDarray[i,0]=self.NDfuel
+				self.NDarray[i,1]=self.NDmod
+				self.NDarray[i,2]=self.NDpoison
+		else:
+			for i in range(0,nBins):
+				self.NDarray[i,0]=self.NDarray[i,0]/2 #fuel
+				self.NDarray[i,1]=self.NDarray[i,1]/2 #mod
+				self.NDarray[i,2]=self.NDarray[i,2]/2 #poison
+		
+	
+############################################################### 
+#end
     	

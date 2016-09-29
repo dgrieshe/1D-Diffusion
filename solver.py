@@ -10,9 +10,9 @@ class Solve:
 		import numpy as np
 		B=np.zeros((options.numBins*options.numGroups,1))
 		lastSource=np.zeros(options.numBins*options.numGroups)
-		error=1000
+		error=1000 
 		j=0
-		while error > 10 ** (-5):
+		while error > 10 ** (-4):
 			k=0
 			errorDiff=np.zeros(options.numBins*options.numGroups)
 			j=j+1

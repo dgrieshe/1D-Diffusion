@@ -2,16 +2,17 @@
 
 from material import *
 
-class Construct:
+class Construct():
+	
+###############################################################
 	
 	def __init__(self):
 		self
 		
-	def constructA(self, options, diff_coef, scat, xs, nDensity):
+###############################################################
+		
+	def constructA(self, options, diff_coef, Gscat, xs, NDarray, data):
 		import numpy as np
-		M=Material()
-		M.read()
-		M.calc_macro()
 
 		
 		nGrps=options.numGroups
@@ -25,11 +26,11 @@ class Construct:
 				for col in range(nBins*(k-1),nBins*k):
 					if row == col:
 						if row == nBins*(k-1):
-							self.A[row,col]=2*diff_coef[row]/(delta*1+4*diff_coef[row])+xs[row]*delta+2*diff_coef[row]*diff_coef[row+1]/(delta*diff_coef[row+1]+delta*diff_coef[row])-scat[k-1,k-1]*nDensity[row-nBins*(k-1),0]*delta 
+							self.A[row,col]=2*diff_coef[row]/(delta*1+4*diff_coef[row])+xs[row]*delta+2*diff_coef[row]*diff_coef[row+1]/(delta*diff_coef[row+1]+delta*diff_coef[row])-Gscat[row-nBins*(k-1),nGrps*(k-1)+k-1]*NDarray[row-nBins*(k-1),0]*delta 
 						elif row == nBins*k-1:
-							self.A[row,col]=2*diff_coef[row]/(delta*1+4*diff_coef[row])+xs[row]*delta+2*diff_coef[row-1]*diff_coef[row]/(delta*diff_coef[row]+delta*diff_coef[row-1])-scat[k-1,k-1]*nDensity[row-nBins*(k-1),0]*delta
+							self.A[row,col]=2*diff_coef[row]/(delta*1+4*diff_coef[row])+xs[row]*delta+2*diff_coef[row-1]*diff_coef[row]/(delta*diff_coef[row]+delta*diff_coef[row-1])-Gscat[row-nBins*(k-1),nGrps*(k-1)+k-1]*NDarray[row-nBins*(k-1),0]*delta
 						else:
-							self.A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(delta*diff_coef[row+1]+delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(delta*diff_coef[row]+delta*diff_coef[row-1])+xs[row]*delta-scat[k-1,k-1]*nDensity[row-nBins*(k-1),0]*delta
+							self.A[row,col]=2*diff_coef[row]*diff_coef[row+1]/(delta*diff_coef[row+1]+delta*diff_coef[row])+2*diff_coef[row-1]*diff_coef[row]/(delta*diff_coef[row]+delta*diff_coef[row-1])+xs[row]*delta-Gscat[row-nBins*(k-1),nGrps*(k-1)+k-1]*NDarray[row-nBins*(k-1),0]*delta
 					elif col == row-1:
 						self.A[row,col]=-2*diff_coef[row-1]*diff_coef[row]/(delta*diff_coef[row]+delta*diff_coef[row-1])
 					elif col == row+1:
@@ -37,16 +38,24 @@ class Construct:
 			for row in range(nBins,nBins*nGrps):
 				for col in range(0,nBins*nGrps):
 					if row == col+nBins*k:
-						A=row-nBins*k
-						i=2
-						while A >= nBins:
-							A=row-nBins*k*i
+						i=1
+						j=0
+						a=row-nBins*k*i
+						b=col-nBins*k*j
+						while a >= nBins:
 							i=i+1
-						self.A[row,col]=-scat[k,k-1]*nDensity[A,0]
-						
+							a=row-nBins*k*i
+						while b >= nBins:
+							j=j+1
+							b=col-nBins*k*j
+						self.A[row,col]=-Gscat[a,nGrps*i*k+j]
+				
+###############################################################
 	def invertA(self):
 		import numpy as np
 		self.inv=np.linalg.inv(self.A)
+		
+###############################################################
 		
 		
 		

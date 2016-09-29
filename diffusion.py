@@ -13,6 +13,7 @@ from solver import *
 from Construct import *
 from nuclide import *
 from material import *
+from depletion import *
 
 fn=FileName()
 fn.GetFileName()
@@ -23,17 +24,17 @@ for f in fn.listfn:
 	#This was made to make the output name nice
 	name = f[len(f)-5]
 	
-	#read input and calculate macroscopic cross sections
+	#read input
 	options=DiffusionOpts1D()
 	options.read(f)
-	
-	M=Material()
-	M.read()
-	M.calc_macro()
+	nBins=options.numBins
+	nGrps=options.numGroups
 	
 	#variables
 	u_g=0.33
-	
+	n=0
+
+
 	totXS=[]
 	absXS=[]
 	scatXS=[]
@@ -41,49 +42,62 @@ for f in fn.listfn:
 	diffcoef=[]
 	
 	
-	numDensity=np.zeros((options.numBins,3))
-	source=np.zeros(options.numBins*options.numGroups)
-	scat=np.zeros((options.numGroups,options.numGroups))
+	source=np.zeros(nBins*nGrps)
+	#group-to-group scattering
+	Gscat=np.zeros((nBins,nGrps*nGrps))
 	sourceGroup=[]
 	
+	N=Nuclides()
+	N.read()
+	M=Material()
+	M.read()
+	M.updateNDarray(nBins,n)
+	NDarray=M.NDarray
 	
-###############################################################################	
+###############################################################
 	
-#create slab and assign each bin its cross section by energy group
+	while n<300:
+		#first iteration: creates macroscopic cross section arrays
+		#totXS, scatXS, and diffcoef with original number densities
+		if n == 0:
+			for k in range(1,nGrps+1):
+				for i in range(0,nBins):
+					totXS.append(N.data['fuel']['totxs'][k]*NDarray[i,0]+N.data['moderator']['totxs'][k]*NDarray[i,1]+N.data['poison']['totxs'][k]*NDarray[i,2])
+					scatXS.append(N.data['fuel']['scatxs'][k]*NDarray[i,0]+N.data['moderator']['scatxs'][k]*NDarray[i,1]+N.data['poison']['scatxs'][k]*NDarray[i,2])
+					diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
+									
 
-	for k in range(1,options.numGroups+1):
-		for i in range(0,options.numBins):
-			totXS.append(M.data['fuel']['totXS'][k]+M.data['moderator']['totXS'][k]+M.data['poison']['totXS'][k])
-			scatXS.append(M.data['fuel']['scatXS'][k]+M.data['moderator']['scatXS'][k]+M.data['poison']['scatXS'][k])
-			absXS.append(M.data['fuel']['absXS'][k]+M.data['moderator']['absXS'][k]+M.data['poison']['absXS'][k])
-			fisXS.append(M.data['fuel']['fisXS'][k]+M.data['moderator']['fisXS'][k]+M.data['poison']['fisXS'][k])
+		else:
+			D=Depletion()
+			D.var()
+			D.forEuler(sol.x,NDarray)
+			NDarray=D.NDarray
 			
-			diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
-			
-
-		#fills the transition matrix/scattering kernel
-		for j in range(0,options.numGroups):
-			scat[j,k-1]=M.data['fuel']['Ex'+str(j+1)][k]+M.data['moderator']['Ex'+str(j+1)][k]+M.data['poison']['Ex'+str(j+1)][k]
-			#adding these moderator and poison values makes it unstable
-			      
-###############################################################################
-
-
-	n=0
-	while n<3:
-		
-		if n !=0:
-			for i in range(0,options.numBins):
-				totXS[i]=totXS[i]/2
-				scatXS[i]=scatXS[i]/2
-				diffcoef[i]=(1/(3*(totXS[i]-u_g*scatXS[i]))) 
-
-		n=n+1
+			#further iterations: updates totXS, scatXS, and diffcoef with new number densities
+			#M.updateNDarray(nBins,n)
+			for k in range(1, nGrps+1):
+				for i in range(nBins*(k-1),nBins*k):
+					totXS[i]=N.data['fuel']['totxs'][k]*NDarray[i-nBins*(k-1),0]+N.data['moderator']['totxs'][k]*NDarray[i-nBins*(k-1),1]+N.data['poison']['totxs'][k]*NDarray[i-nBins*(k-1),2]
+					scatXS[i]=N.data['fuel']['scatxs'][k]*NDarray[i-nBins*(k-1),0]+N.data['moderator']['scatxs'][k]*NDarray[i-nBins*(k-1),1]+N.data['poison']['scatxs'][k]*NDarray[i-nBins*(k-1),2]
+					diffcoef[i]=(1/(3*(totXS[i]-u_g*scatXS[i]))) 
+				
+		#fills the group-to-group scattering/transition matrix per bin
+		for i in range (0,nBins):
+			count=1
+			gcount=1
+			for j in range(0,nGrps*nGrps):
+				Gscat[i,j]=N.data['fuel']['Ex'+str(gcount)][count]*NDarray[i,0]+N.data['moderator']['Ex'+str(gcount)][count]*NDarray[i,1]+N.data['poison']['Ex'+str(gcount)][count]*NDarray[i,2]
+				count=count+1
+				if count == nGrps+1:
+					count=1
+					gcount=gcount+1
+				
 		
 		#Builds the linear system of equations
 		A=Construct()
-		A.constructA(options, diffcoef, scat, totXS, numDensity)
+		A.constructA(options, diffcoef, Gscat, totXS, NDarray, N.data)
 		
+		n=n+1
 		
 		#sets the initial value of the source
 		for i in range (0,len(source)):
@@ -97,7 +111,8 @@ for f in fn.listfn:
 		sol=Solve()
 		sol.solve(options, A.inv, source)
 	
+	
 	results=Plotter()
-	results.plot(sol.x,1,options.numBins,options.numGroups,name)
+	results.plot(sol.x,1,nBins,nGrps,name)
     
 ###############################################################################

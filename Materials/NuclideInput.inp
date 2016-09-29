@@ -2,39 +2,33 @@ numNuclides 3
 
 nuclide 1
 name fuel
-numGroups 3
-totalXs 10 500 10000
-absorptionXs 2 200 9000
-fissionXs 1 150 8000
-scatterXs 8 300 1000
-Gscat1 5 0 0
-Gscat2 2 250 0
-Gscat3 1 50 1000
+numGroups 1
+totalXs 1.0 #1.01
+absorptionXs 0.2 #0.3
+fissionXs 0.1 #0.1
+scatterXs 0.8 #0.71
+Gscat1 0.8 #0
 
 end 0
 
 nuclide 2
 name moderator
-numGroups 3
-totalXs 0 0 0
-absorptionXs 0 0 0
-fissionXs 0 0 0
-scatterXs 0 0 0
-Gscat1 0 0 0
-Gscat2 0 0 0
-Gscat3 0 0 0
+numGroups 1
+totalXs 0.8 #1
+absorptionXs 0.01 #0.01
+fissionXs 0 #0
+scatterXs 0.79 #0.99
+Gscat1 0.79 #0
 
 end 0
 
 nuclide 3
 name poison
-numGroups 3
-totalXs 0 0 0
-absorptionXs 0 0 0
-fissionXs 0 0 0
-scatterXs 0 0 0
-Gscat1 0 0 0
-Gscat2 0 0 0
-Gscat3 0 0 0
+numGroups 1
+totalXs 1 #1.1
+absorptionXs 0.9 #0.9
+fissionXs 0 #0
+scatterXs 0.1 #0.11
+Gscat1 0.1 #0
 
 end 0

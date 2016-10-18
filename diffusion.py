@@ -6,6 +6,7 @@
 #imports
 #use sudo apt-get install python.numpy if needed
 import numpy as np 
+import matplotlib.pyplot as plt
 from diffOpts import *
 from plotter import * 
 from GetFileName import *
@@ -56,7 +57,7 @@ for f in fn.listfn:
 	
 ###############################################################
 	
-	while n<300:
+	while n<50:
 		#first iteration: creates macroscopic cross section arrays
 		#totXS, scatXS, and diffcoef with original number densities
 		if n == 0:
@@ -73,8 +74,13 @@ for f in fn.listfn:
 			D.forEuler(sol.x,NDarray)
 			NDarray=D.NDarray
 			
+			#print NDarray[:,0]
+			plt.plot(NDarray[:,0])
+			plt.savefig('./output/numdensity')
+			
 			#further iterations: updates totXS, scatXS, and diffcoef with new number densities
 			#M.updateNDarray(nBins,n)
+			#because the XS arrays have length nBins*nGrps, NDarray must iterate as i-nBins*(k-1)
 			for k in range(1, nGrps+1):
 				for i in range(nBins*(k-1),nBins*k):
 					totXS[i]=N.data['fuel']['totxs'][k]*NDarray[i-nBins*(k-1),0]+N.data['moderator']['totxs'][k]*NDarray[i-nBins*(k-1),1]+N.data['poison']['totxs'][k]*NDarray[i-nBins*(k-1),2]
@@ -109,7 +115,7 @@ for f in fn.listfn:
 
 		A.invertA()
 		sol=Solve()
-		sol.solve(options, A.inv, source)
+		sol.solve(options, A.inv, source, NDarray, N.data)
 	
 	
 	results=Plotter()

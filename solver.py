@@ -5,7 +5,7 @@ class Solve:
 	def __init__(self):
 		self
 		
-	def solve(self, options, Ainv, source):
+	def solve(self, options, Ainv, source, NDarray, Ndata):
 		
 		import numpy as np
 		B=np.zeros((options.numBins*options.numGroups,1))
@@ -28,10 +28,18 @@ class Solve:
 				errorDiff[i]=abs(lastSource[i]-source[i])
 			error=max(errorDiff)
 			print(j,k,error)
+		norm=0
+		for k in range(1, options.numGroups+1):
+			for i in range(options.numBins*(k-1),options.numBins*k):
+				norm=norm+self.x[i]*options.delta/options.numBins*200*NDarray[i-options.numBins*(k-1),0]*Ndata['fuel']['fisxs'][k]
+		for i in range(0,len(self.x)):
+			self.x[i]=self.x[i]/norm
+		#sum=0
+		#for k in range(1, options.numGroups+1):
+		#	for i in range(options.numBins*(k-1),options.numBins*k):
+		#		sum=sum+self.x[i]*options.delta/options.numBins*200*NDarray[i-options.numBins*(k-1),0]*Ndata['fuel']['fisxs'][k]
+		#print sum
 		
-		#One way to avoid looping through each value in the array
-		#doesn't seem any faster, because this does seem to be a loop
-		#result = [v * 2.5*0.006 for v in x]
 		
 		
 		

@@ -8,32 +8,66 @@ class Solve:
 	def solve(self, options, Ainv, source, fisXS, NDarray, Ndata):
 		
 		import numpy as np
-		B=np.zeros((options.numBins*options.numGroups,1))
-		lastSource=np.zeros(options.numBins*options.numGroups)
+
+		# Create array variables.
+		B = np.zeros((options.numBins*options.numGroups,1))
+		lastSource = np.zeros(options.numBins*options.numGroups)
+		errorDiff = np.zeros(options.numBins*options.numGroups)
+
+		# Initialize local variables
 		error=1000 
 		j=0
+                
+                # Loop until the source difference between iterations falls
+                # below the specified threshold.
+                
+                # Note: we should probably read the threshold from the input
+                # file
+                
 		while error > 10 ** (-5):
-			k=0
-			errorDiff=np.zeros(options.numBins*options.numGroups)
-			j=j+1
-			for i in range(0,len(source)):
-				lastSource[i]=source[i]
-				B[i]=source[i]
-			self.x=np.dot(Ainv,B)
+                	# Reset local variables
+			k = 0
+			j = j+1
+                        errorDiff[:] = 0.
+                        
+                        # Save the previous source and then convert the source
+                        # into a column vector so that we can take the dot
+                        # product.
+                        
+                        lastSource[:] = source[:]
+                        B[:,0] = source[:]
+                        
+			# Take the dot product of A-inverse and B to solve for
+                        # the flux and store the flux in variable x.
 
-			for i in range(0,len(source)):
-				source[i]=self.x[i]*options.delta*2.5*fisXS[i]
-				k=k+source[i]
+			self.x = np.dot(Ainv,B)
 
-			for i in range(0,len(source)):
-				source[i]=source[i]/k
-				errorDiff[i]=abs(lastSource[i]-source[i])
+			# Calculate the fission source in each spatial bin
+
+			source[:] = self.x[:,0]*options.delta*2.5*fisXS[:]
+                        			
+			# Perform the source normalization by dividing by k_eff
+
+			k = sum(source)
+                        source[:]=source[:]/k
+
+			# Calculate the difference in the source between
+        		# consecutive iterations and take the infinity norm.
+
+			errorDiff[:]=abs(lastSource[:]-source[:])
 			error=max(errorDiff)
+
+			# Print statement to show eigenvalue convergence by
+                        # iteration.
 			#print(j,k,error)
 
-		power=0
-                for i in range(0,len(self.x)):
-			power=self.x[i]*options.delta*200*fisXS[i]
+		
+                # Calculate the (unnormalized) power of the reactor
+
+                energyPerFission = 200.
+		power = self.x[:,0]*options.delta*energyPerFission*fisXS[:]
+                                
+		# Print the final output from the diffusion solution.
                 
 		print "Eigenvalue: ", k, "(", error, ")"
                 #print "Max flux: ", max(self.x)[0]
@@ -42,9 +76,15 @@ class Solve:
                 #print "Max fixXs: ", max(fisXS)
                 #print "Power: ", power[0]
                 #print ""
+
+		# Normalize the flux to the appropriate power level.
+                # We should probably read the power level from the input file.
+                
+                powerLevel = 100.
+		self.x[:]=self.x[:]*powerLevel/power[0]
 		
-                for i in range(0,len(self.x)):
-			self.x[i]=self.x[i]*100./power[0]
+                #for i in range(0,len(self.x)):
+		#	self.x[i]=self.x[i]*100./power[0]
 		#sum=0
 		#for k in range(1, options.numGroups+1):
 		#	for i in range(options.numBins*(k-1),options.numBins*k):

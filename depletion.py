@@ -36,7 +36,7 @@ class Depletion():
 
 		self.NDarray=NDarray
 		for i in range(0,len(NDarray)):
-			A=np.matrix([[-self.fuel_absxs*flux[i,0],0],[self.y*self.fuel_fisxs*flux[i,0],-(self.poison_absxs)*flux[i,0]]])
+			A=np.matrix([[-self.fuel_absxs*flux[i],0],[self.y*self.fuel_fisxs*flux[i],-(self.poison_absxs)*flux[i]]])
 			B=np.matrix([[1,0],[0,1]])
 			self.ND=np.matrix([NDarray[i,0],NDarray[i,2]])
 			NumDensities=np.dot(self.ND,scipy.sparse.linalg.expm_multiply(A,B,start=0,stop=self.t*self.num,num=self.num))
@@ -50,7 +50,7 @@ class Depletion():
 		
 		self.NDarray=NDarray                                    
 		for i in range(0,len(NDarray)):
-			A=np.matrix([[-self.fuel_absxs*flux[i,0],0],[self.y*self.fuel_fisxs*flux[i,0],-(self.poison_absxs)*flux[i,0]]])
+			A=np.matrix([[-self.fuel_absxs*flux[i],0],[self.y*self.fuel_fisxs*flux[i],-(self.poison_absxs)*flux[i]]])
 			self.ND=np.matrix([NDarray[i,0],NDarray[i,2]])
 			j=self.t
 			while j<=self.t*self.num:

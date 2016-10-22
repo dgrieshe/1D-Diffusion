@@ -10,7 +10,6 @@ class Solve:
 		import numpy as np
 
 		# Create array variables.
-		B = np.zeros((options.numBins*options.numGroups,1))
 		lastSource = np.zeros(options.numBins*options.numGroups)
 		errorDiff = np.zeros(options.numBins*options.numGroups)
 
@@ -30,21 +29,19 @@ class Solve:
 			j = j+1
                         errorDiff[:] = 0.
                         
-                        # Save the previous source and then convert the source
-                        # into a column vector so that we can take the dot
-                        # product.
+                        # Save the previous source so that we can compute the
+                        # residual error for the iteration.
                         
                         lastSource[:] = source[:]
-                        B[:,0] = source[:]
                         
 			# Take the dot product of A-inverse and B to solve for
                         # the flux and store the flux in variable x.
 
-			self.x = np.dot(Ainv,B)
+			self.x = np.dot(Ainv,source)
 
 			# Calculate the fission source in each spatial bin
 
-			source[:] = self.x[:,0]*options.delta*2.5*fisXS[:]
+			source[:] = self.x[:]*options.delta*2.5*fisXS[:]
                         			
 			# Perform the source normalization by dividing by k_eff
 
@@ -65,7 +62,7 @@ class Solve:
                 # Calculate the (unnormalized) power of the reactor
 
                 energyPerFission = 200.
-		power = self.x[:,0]*options.delta*energyPerFission*fisXS[:]
+		power = self.x[:]*options.delta*energyPerFission*fisXS[:]
                                 
 		# Print the final output from the diffusion solution.
                 

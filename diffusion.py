@@ -57,7 +57,7 @@ for f in fn.listfn:
 	
 ###############################################################
 	
-	while n<50:
+	while n<40:
 		#first iteration: creates macroscopic cross section arrays
 		#totXS, scatXS, and diffcoef with original number densities
 		if n == 0:
@@ -65,16 +65,15 @@ for f in fn.listfn:
 				for i in range(0,nBins):
 					totXS.append(N.data['fuel']['totxs'][k]*NDarray[i,0]+N.data['moderator']['totxs'][k]*NDarray[i,1]+N.data['poison']['totxs'][k]*NDarray[i,2])
 					scatXS.append(N.data['fuel']['scatxs'][k]*NDarray[i,0]+N.data['moderator']['scatxs'][k]*NDarray[i,1]+N.data['poison']['scatxs'][k]*NDarray[i,2])
-					diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
-									
+					fisXS.append(N.data['fuel']['fisxs'][k]*NDarray[i,0])
+					diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))							
 
 		else:
 			D=Depletion()
 			D.var()
-			D.forEuler(sol.x,NDarray)
+			D.forEuler(sol.x*options.delta,NDarray)
 			NDarray=D.NDarray
 			
-			#print NDarray[:,0]
 			plt.plot(NDarray[:,0])
 			plt.savefig('./output/numdensity')
 			
@@ -85,7 +84,8 @@ for f in fn.listfn:
 				for i in range(nBins*(k-1),nBins*k):
 					totXS[i]=N.data['fuel']['totxs'][k]*NDarray[i-nBins*(k-1),0]+N.data['moderator']['totxs'][k]*NDarray[i-nBins*(k-1),1]+N.data['poison']['totxs'][k]*NDarray[i-nBins*(k-1),2]
 					scatXS[i]=N.data['fuel']['scatxs'][k]*NDarray[i-nBins*(k-1),0]+N.data['moderator']['scatxs'][k]*NDarray[i-nBins*(k-1),1]+N.data['poison']['scatxs'][k]*NDarray[i-nBins*(k-1),2]
-					diffcoef[i]=(1/(3*(totXS[i]-u_g*scatXS[i]))) 
+					fisXS[i]=N.data['fuel']['fisxs'][k]*NDarray[i-nBins*(k-1),0]
+					diffcoef[i]=(1/(3*(totXS[i]-u_g*scatXS[i])))
 				
 		#fills the group-to-group scattering/transition matrix per bin
 		for i in range (0,nBins):
@@ -101,7 +101,7 @@ for f in fn.listfn:
 		
 		#Builds the linear system of equations
 		A=Construct()
-		A.constructA(options, diffcoef, Gscat, totXS, NDarray, N.data)
+		A.constructA(options, diffcoef, Gscat, totXS, NDarray)
 		
 		n=n+1
 		
@@ -115,7 +115,7 @@ for f in fn.listfn:
 
 		A.invertA()
 		sol=Solve()
-		sol.solve(options, A.inv, source, NDarray, N.data)
+		sol.solve(options, A.inv, source, fisXS, NDarray, N.data)
 	
 	
 	results=Plotter()

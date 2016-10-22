@@ -11,7 +11,7 @@ class Construct():
 		
 ###############################################################
 		
-	def constructA(self, options, diff_coef, Gscat, xs, NDarray, data):
+	def constructA(self, options, diff_coef, Gscat, xs, NDarray):
 		import numpy as np
 
 		

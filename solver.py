@@ -9,7 +9,7 @@ class Solve:
 		
 		import numpy as np
 
-		# Create array variables.
+		# Create local array variables.
 		lastSource = np.zeros(options.numBins*options.numGroups)
 		errorDiff = np.zeros(options.numBins*options.numGroups)
 
@@ -71,23 +71,14 @@ class Solve:
                 #print "Total source: ", sum(source)
                 #print "Min fisXs: ", min(fisXS)
                 #print "Max fixXs: ", max(fisXS)
-                #print "Power: ", power[0]
+                #print "Unnormalized power: ", power[0]
                 #print ""
 
 		# Normalize the flux to the appropriate power level.
                 # We should probably read the power level from the input file.
                 
                 powerLevel = 100.
-		self.x[:]=self.x[:]*powerLevel/power[0]
-		
-                #for i in range(0,len(self.x)):
-		#	self.x[i]=self.x[i]*100./power[0]
-		#sum=0
-		#for k in range(1, options.numGroups+1):
-		#	for i in range(options.numBins*(k-1),options.numBins*k):
-		#		sum=sum+self.x[i]*options.delta/options.numBins*200*NDarray[i-options.numBins*(k-1),0]*Ndata['fuel']['fisxs'][k]
-		#print sum
-		
+		self.x[:]=self.x[:]*powerLevel/power[0]		
 		
 		
 		

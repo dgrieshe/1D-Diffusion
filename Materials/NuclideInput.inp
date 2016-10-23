@@ -3,10 +3,10 @@ numNuclides 3
 nuclide 1
 name fuel
 numGroups 1
-totalXs 1.0 #1.01
-absorptionXs 0.2 #0.3
-fissionXs 0.1 #0.1
-scatterXs 0.8 #0.71
+totalXs 2.0 #1.01
+absorptionXs 1.2 #0.3
+fissionXs 1 #0.1           
+scatterXs 0.8 #0.71        
 Gscat1 0.8 #0
 
 end 0
@@ -23,12 +23,73 @@ Gscat1 0.79 #0
 end 0
 
 nuclide 3
-name poison
+name poison1
 numGroups 1
 totalXs 1 #1.1
 absorptionXs 0.9 #0.9
 fissionXs 0 #0
 scatterXs 0.1 #0.11
-Gscat1 0.1 #0
+Gscat1 0.1 #0                   
+decay 0.0
+
+end 0                          
+       
+nuclide 4        
+name poison2
+numGroups 1
+totalXs 0.9 #1.1
+absorptionXs 0.8 #0.9
+fissionXs 0 #0
+scatterXs 0.1 #0.11
+Gscat1 0.1 #0          
+decay 0.0
 
 end 0
+
+nuclide 5
+name poison3
+numGroups 1
+totalXs 1.1 #1.1
+absorptionXs 1 #0.9
+fissionXs 0 #0
+scatterXs 0.1 #0.11
+Gscat1 0.1 #0
+decay 0.0      
+
+end 0
+
+#nuclide 6                         
+#name poison4
+#numGroups 1
+#totalXs 1.9 #1.1   
+#absorptionXs 0.99 #0.9
+#fissionXs 0 #0
+#scatterXs 0.1 #0.11     
+#Gscat1 0.1 #0
+#decay 0.0
+#
+#end 0
+#
+#nuclide 7
+#name poison5
+#numGroups 1
+#totalXs 0.99 #1.1
+#absorptionXs 0.89 #0.9
+#fissionXs 0 #0
+#scatterXs 0.1 #0.11
+#Gscat1 0.1 #0
+#decay 0.0
+#                    
+#end 0        
+                                             
+#nuclide 8
+#name poison6        
+#numGroups 1          
+#totalXs 1 #1.1
+#absorptionXs 0.9 #0.9
+#fissionXs 0 #0
+#scatterXs 0.1 #0.11             
+#Gscat1 0.1 #0     
+#decay 0.0
+#
+#end 0                                

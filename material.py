@@ -15,7 +15,13 @@ class Material():
 ###############################################################		
 		
 	def read(self):
+		
+		
 		inpFile = open('Materials/NumDensities.inp','r')
+		#Create list of poison number densities
+		self.poisonListND = []
+		
+		
 		for line in inpFile:
 			
 			#Remove trailing whitespace
@@ -39,23 +45,21 @@ class Material():
 				elif keyword == 'moderator':
 					self.NDmod = float(arguments)
 					
-				elif keyword == 'poison':
+				elif keyword[:-1] == 'poison':
 					self.NDpoison = float(arguments)
+					self.poisonListND.append(self.NDpoison)
 
 ###############################################################
 					
-	def updateNDarray(self,nBins,n):
+	def createNDarray(self,nBins,n):
+		
 		if n==0:
-			self.NDarray=np.zeros((nBins,3))
+			self.NDarray=np.zeros((nBins,len(self.poisonListND)+2))
 			for i in range(0,nBins):
 				self.NDarray[i,0]=self.NDfuel
 				self.NDarray[i,1]=self.NDmod
-				self.NDarray[i,2]=self.NDpoison
-		else:
-			for i in range(0,nBins):
-				self.NDarray[i,0]=self.NDarray[i,0]/2 #fuel
-				self.NDarray[i,1]=self.NDarray[i,1]/2 #mod
-				self.NDarray[i,2]=self.NDarray[i,2]/2 #poison
+				for j in range(0,len(self.poisonListND)):
+					self.NDarray[i,j+2]=self.poisonListND[j]
 		
 	
 ############################################################### 

@@ -1,9 +1,9 @@
 material
-fuel 0.023
-moderator 0.01
+fuel 0.0223
+moderator 0.000000335
 poison1 0.0
 poison2 0.0
-poison3 0.0
+#poison3 0.0
 #poison4 0.0
 #poison5 0.0 
 #poison6 0.0

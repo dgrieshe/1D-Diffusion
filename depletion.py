@@ -14,12 +14,14 @@ class Depletion():
 
 ###############################################################
 
-	def var(self, N):
+	def var(self, N, powerLevel, nYield, EperFission):
 		
 		self.t=0.0001
 		self.num=5
 		#fission neutron yield
-		self.y=2.3
+		self.y= nYield
+		self.energyPerFission = EperFission
+		self.powerLevel = powerLevel
 		#cross sections
 		self.fuel_absxs=N.data['fuel']['absxs'][1]
 		self.fuel_fisxs=N.data['fuel']['fisxs'][1]
@@ -51,7 +53,7 @@ class Depletion():
 		
 ###############################################################
 
-	def forEuler(self, flux, NDarray):
+	def forEuler(self, flux, NDarray, fisXS):
 		
 		self.NDarray=NDarray                                    
 		for i in range(0,len(NDarray)):
@@ -64,7 +66,6 @@ class Depletion():
 						if row == 0:
 							self.A[row,col]=-self.fuel_absxs*flux[i]
 						else:
-							#Do we need some probability for each poison?
 							self.A[row,col]=self.y*self.fuel_fisxs*flux[i]
 					else:
 						if row == col:
@@ -87,6 +88,8 @@ class Depletion():
 					NumDensities=np.array([self.ND+j*np.dot(self.A,self.ND)])
 				else:
 					NumDensities=np.concatenate((NumDensities,np.array([self.ND+j*np.dot(self.A,self.ND)])))
+				power = flux[:]*self.energyPerFission*fisXS[:]
+				flux[:]=flux[:]*self.powerLevel/power[0]
 				j=j+self.t
 			
 			

@@ -1,5 +1,8 @@
-length 400
+length 350
 rightBC escape 
 leftBC escape 
 numgroups 1
-numbins 400 
+numbins 700
+powerLevel 100
+FneutronYield 2.3
+EperFission 200

@@ -61,8 +61,9 @@ class Solve:
 		
                 # Calculate the (unnormalized) power of the reactor
 
-                energyPerFission = 200.
-		power = self.x[:]*options.delta*energyPerFission*fisXS[:]
+        #next two lines from old code when power was normalized here
+                #energyPerFission = 200.
+		#power = self.x[:]*options.delta*energyPerFission*fisXS[:]
                                 
 		# Print the final output from the diffusion solution.
                 
@@ -77,8 +78,9 @@ class Solve:
 		# Normalize the flux to the appropriate power level.
                 # We should probably read the power level from the input file.
                 
-                powerLevel = 100.
-		self.x[:]=self.x[:]*powerLevel/power[0]		
+        #next two lines from old code when power was normalized here
+                #powerLevel = 100
+		#self.x[:]=self.x[:]*powerLevel/power[0]		
 		
 		
 		

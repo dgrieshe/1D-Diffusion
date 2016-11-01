@@ -1,4 +1,4 @@
-#last edited by Miriam Rathbun on 7/9/2016
+#last edited by Miriam Rathbun on 11/1/2016
 
 class DiffusionOpts1D:
 	
@@ -23,6 +23,18 @@ class DiffusionOpts1D:
 			elif keyword == 'numbins':
 				self.numBins = arguments
 				self.numBins = int(self.numBins)
+				
+			elif keyword == 'powerLevel':
+				self.powerLevel = arguments
+				self.powerLevel = float(self.powerLevel)
+				
+			elif keyword == 'FneutronYield':
+				self.nYield = arguments
+				self.nYield = float(self.nYield)
+				
+			elif keyword == 'EperFission':
+				self.EperFission = arguments
+				self.EperFission = float(self.EperFission)
 				
 			else:
 				continue

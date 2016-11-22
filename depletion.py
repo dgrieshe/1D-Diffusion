@@ -16,10 +16,10 @@ class Depletion():
 
 	def var(self, N, powerLevel, nYield, EperFission):
 		
-		self.t=0.0001
-		self.num=5
+		self.t = 0.0001
+		self.num = 5
 		#fission neutron yield
-		self.y= nYield
+		self.y = nYield
 		self.energyPerFission = EperFission
 		self.powerLevel = powerLevel
 		#cross sections
@@ -53,20 +53,22 @@ class Depletion():
 		
 ###############################################################
 
-	def forEuler(self, flux, NDarray, fisXS):
-		
-		self.NDarray=NDarray                                    
+	def forEuler(self, flux, NDarray, fisXS, YieldList, summation):
+		self.NDarray = NDarray                                    
 		for i in range(0,len(NDarray)):
 			
+			#flux is already multiplied by delta
+			#see input for forEuler
+				
 			#A is the matrix with the microscopic xs and decay constants
-			self.A=np.zeros((len(self.poisonList)+1,len(self.poisonList)+1))
+			self.A = np.zeros((len(self.poisonList)+1,len(self.poisonList)+1))
 			for row in range(0,len(self.A)):
 				for col in range(0,len(self.A)):
 					if col == 0:
 						if row == 0:
-							self.A[row,col]=-self.fuel_absxs*flux[i]
+							self.A[row,col] = -self.fuel_absxs*flux[i]
 						else:
-							self.A[row,col]=self.y*self.fuel_fisxs*flux[i]
+							self.A[row,col] = YieldList[row-1]*self.energyPerFission*self.fuel_fisxs*flux[i]
 					else:
 						if row == col:
 							self.A[row,col]=-(self.p_absxs[row-1]*flux[i]+self.decayCST[row-1])
@@ -84,19 +86,24 @@ class Depletion():
 			#sub-stepping
 			j=self.t
 			while j<=self.t*self.num:
+				
+				#Flux is already multiplied by delta
+				#See input for forEuler
+				
+				#Power normalization
+				power1 = flux[:]*self.energyPerFission*fisXS[:]
+				power2 = (1-sum(YieldList))*flux[:]*self.energyPerFission*fisXS[:]+summation[:]
+				flux[:]=flux[:]*self.powerLevel/power2[0]
 				if j==self.t:
 					NumDensities=np.array([self.ND+j*np.dot(self.A,self.ND)])
 				else:
 					NumDensities=np.concatenate((NumDensities,np.array([self.ND+j*np.dot(self.A,self.ND)])))
-				power = flux[:]*self.energyPerFission*fisXS[:]
-				flux[:]=flux[:]*self.powerLevel/power[0]
 				j=j+self.t
 			
 			
 			#NumDensities=np.array(self.ND+self.t*np.dot(self.ND,A))
 			#print NumDensities
 			#print NumDensities[self.num-1,0]
-			
 			#updating NDarray
 			self.NDarray[i,0]=NumDensities[self.num-1,0]
 			for n in range (0,len(self.poisonList)):

@@ -22,6 +22,8 @@ class Nuclides:
     	self.poisonList = []
     	#Create list of nuclides
     	self.nuclideList = []
+    	#Create list of yield figures
+    	self.YieldList = []
     	
     	
     	for line in inpFile:  
@@ -88,6 +90,10 @@ class Nuclides:
     			self.decay = float(arguments)
     			poisonFLAG = 1
     			self.poisonList.append(self.name)
+    			
+    		elif keyword == 'yield':
+    			self.Yield = float(arguments)
+    			self.YieldList.append(self.Yield)
     
     			
     		if keyword == 'end':
@@ -110,6 +116,7 @@ class Nuclides:
     					self.d[self.name]['Ex'+str(i)][j]=self.Gscat[i-1,j-1]
     				if poisonFLAG == 1:
     					self.d[self.name]['decayCST']=self.decay
+    					self.d[self.name]['yield']=self.Yield
     			self.data.update(self.d)
     			
     			

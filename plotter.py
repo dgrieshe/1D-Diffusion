@@ -7,7 +7,7 @@ class Plotter:
 	def __init__(self):
 		self
 		
-	def plot(self, solution, group, numBins, numGroups, name):
+	def plot(self, solution, group, numBins, numGroups, name, n):
 		
 		import numpy as np
 		import matplotlib.pyplot as plt
@@ -20,12 +20,13 @@ class Plotter:
 				x_group[l]=solution[i]
 				l=l+1
 				
-			
+			n=str(n)
 			groups.append('group%i' %k)
 			colors=['r','b','g','o','n','p']	
 			groups[k-1], = plt.plot(x_group, colors[k-1], label=groups[k-1])
+			plt.ylim([0,0.05])
 			plt.ylabel('flux')
 			plt.legend(groups)
-			plt.savefig('./output/figure'+name)
+			plt.savefig('./output/figure'+name+n)
 	
 	

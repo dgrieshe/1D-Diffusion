@@ -45,7 +45,7 @@ class Material():
 				elif keyword == 'moderator':
 					self.NDmod = float(arguments)
 					
-				elif keyword[:-1] == 'poison':
+				elif keyword[:-2] == 'poison':
 					self.NDpoison = float(arguments)
 					self.poisonListND.append(self.NDpoison)
 

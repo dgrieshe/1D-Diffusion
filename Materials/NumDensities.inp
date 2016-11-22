@@ -1,10 +1,16 @@
 material
 fuel 0.0223
-moderator 0.000000335
-poison1 0.0
-poison2 0.0
-#poison3 0.0
-#poison4 0.0
-#poison5 0.0 
-#poison6 0.0
+moderator 0.000000335     
+#boron 0.0
+poison01 0.0                          
+poison02 0.0     
+poison03 0.0     
+poison04 0.0
+poison05 0.0
+poison06 0.0
+poison07 0.0
+poison08 0.0
+poison09 0.0        
+poison10 0.0
+poison11 0.0
 end

@@ -2,19 +2,19 @@ numNuclides 3
 
 nuclide 1
 name fuel
-numGroups 1
-totalXs 24.3 #1.01
-absorptionXs 7.6 #0.3
-fissionXs 7 #0.1           
+numGroups 1  
+totalXs 39.7 #1.01 
+absorptionXs 23 #0.3
+fissionXs 21.2 #0.1           
 scatterXs 16.7 #0.71        
-Gscat1 16.7 #0
-
-end 0
-
-nuclide 2
+Gscat1 16.7 #0     
+                         
+end 0                
+          
+nuclide 2    
 name moderator
-numGroups 1
-totalXs 103.66 #1
+numGroups 1   
+totalXs 103.66 #1               
 absorptionXs 0.66 #0.01
 fissionXs 0 #0
 scatterXs 103 #0.99
@@ -22,74 +22,156 @@ Gscat1 103 #0
 
 end 0
 
-nuclide 3
-name poison1 #Nb-95              
+#nuclide 3
+#name boron
+#numGroups 1
+#totalXs 0 #1
+#absorptionXs 0 #0.01
+#fissionXs 0 #0
+#scatterXs 0 #0.99
+#Gscat1 0 #0
+#
+#end 0
+
+nuclide 4
+name poison01             
 numGroups 1
-totalXs 6.16 #1.1
-absorptionXs 1.16 #0.9
+totalXs 0 #1.1
+absorptionXs 0 #0.9
 fissionXs 0 #0
-scatterXs 5 #0.11
-Gscat1 5 #0                   
-decay .000000229
+scatterXs 0 #0.11
+Gscat1 0 #0                   
+decay 1.772
+yield 0.00299
 
 end 0                     
        
-nuclide 4        
-name poison2 #Ce-137
+nuclide 5       
+name poison02
 numGroups 1           
-totalXs 9.73 #1.1        
-absorptionXs 0.73 #0.9
+totalXs 0 #1.1        
+absorptionXs 0 #0.9
 fissionXs 0 #0
-scatterXs 0.9 #0.11
-Gscat1 0.9 #0          
-decay 0.000000000728
+scatterXs 0 #0.11
+Gscat1 0 #0          
+decay 0.5774
+yield 0.00825
                 
 end 0
 
-#nuclide 5
-#name poison3 #I-129
-#numGroups 1      
-#totalXs 10.6 #1.1
-#absorptionXs 7 #0.9
-#fissionXs 0 #0
-#scatterXs 3.6 #0.11
-#Gscat1 3.6 #0
-#decay 0.0      
+nuclide 6
+name poison03
+numGroups 1      
+totalXs 0 #1.1
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11
+Gscat1 0 #0
+decay 0.06743  
+yield 0.0155
 
-#end 0             
+end 0             
 
-#nuclide 6                         
-#name poison4
-#numGroups 1
-#totalXs 1.9 #1.1   
-#absorptionXs 0.99 #0.9
-#fissionXs 0 #0
-#scatterXs 0.1 #0.11     
-#Gscat1 0.1 #0
-#decay 0.0
-#
-#end 0
-#
-#nuclide 7
-#name poison5
-#numGroups 1
-#totalXs 0.99 #1.1
-#absorptionXs 0.89 #0.9
-#fissionXs 0 #0
-#scatterXs 0.1 #0.11
-#Gscat1 0.1 #0
-#decay 0.0
-#                    
-#end 0        
-                                             
-#nuclide 8
-#name poison6        
-#numGroups 1          
-#totalXs 1 #1.1
-#absorptionXs 0.9 #0.9
-#fissionXs 0 #0
-#scatterXs 0.1 #0.11             
-#Gscat1 0.1 #0     
-#decay 0.0
-#
-#end 0                                
+nuclide 7                        
+name poison04
+numGroups 1
+totalXs 0 #1.1   
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11     
+Gscat1 0 #0
+decay 0.006214
+yield 0.01935
+
+end 0
+
+nuclide 8
+name poison05
+numGroups 1
+totalXs 0 #1.1
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11
+Gscat1 0 #0
+decay 0.0004739
+yield 0.01165
+                    
+end 0        
+                                            
+nuclide 9
+name poison06        
+numGroups 1          
+totalXs 0 #1.1
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11             
+Gscat1 0 #0            
+decay 0.00004810
+yield 0.00645
+
+end 0  
+
+nuclide 10
+name poison07       
+numGroups 1          
+totalXs 0 #1.1
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11             
+Gscat1 0 #0            
+decay 0.000005344
+yield 0.00231
+
+end 0   
+
+nuclide 11
+name poison08       
+numGroups 1          
+totalXs 0 #1.1
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11             
+Gscat1 0 #0            
+decay 0.0000005726
+yield 0.00164
+
+end 0   
+
+nuclide 12
+name poison09       
+numGroups 1          
+totalXs 0 #1.1
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11             
+Gscat1 0 #0            
+decay 0.0000001036
+yield 0.00085
+
+end 0 
+
+nuclide 13
+name poison10      
+numGroups 1          
+totalXs 0 #1.1
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11             
+Gscat1 0 #0            
+decay 0.00000002959
+yield 0.00043
+
+end 0 
+
+nuclide 14
+name poison11      
+numGroups 1          
+totalXs 0 #1.1
+absorptionXs 0 #0.9
+fissionXs 0 #0
+scatterXs 0 #0.11             
+Gscat1 0 #0            
+decay 0.0000000007585
+yield 0.00057
+
+end 0    

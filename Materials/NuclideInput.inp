@@ -2,7 +2,8 @@ numNuclides 3
 
 nuclide 1
 name fuel
-numGroups 1  
+numGroups 1
+u_g 0.0113
 totalXs 39.7 #1.01 
 absorptionXs 23 #0.3
 fissionXs 21.2 #0.1           
@@ -14,6 +15,7 @@ end 0
 nuclide 2    
 name moderator
 numGroups 1   
+u_g 0.324
 totalXs 103.66 #1               
 absorptionXs 0.66 #0.01
 fissionXs 0 #0
@@ -25,6 +27,7 @@ end 0
 #nuclide 3
 #name boron
 #numGroups 1
+#u_g 0.0606
 #totalXs 0 #1
 #absorptionXs 0 #0.01
 #fissionXs 0 #0
@@ -36,6 +39,7 @@ end 0
 nuclide 4
 name poison01             
 numGroups 1
+u_g 0
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -48,7 +52,8 @@ end 0
        
 nuclide 5       
 name poison02
-numGroups 1           
+numGroups 1  
+u_g 0      
 totalXs 0 #1.1        
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -61,7 +66,8 @@ end 0
 
 nuclide 6
 name poison03
-numGroups 1      
+numGroups 1  
+u_g 0    
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -75,6 +81,7 @@ end 0
 nuclide 7                        
 name poison04
 numGroups 1
+u_g 0
 totalXs 0 #1.1   
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -88,6 +95,7 @@ end 0
 nuclide 8
 name poison05
 numGroups 1
+u_g 0
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -100,7 +108,8 @@ end 0
                                             
 nuclide 9
 name poison06        
-numGroups 1          
+numGroups 1 
+u_g 0         
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -113,7 +122,8 @@ end 0
 
 nuclide 10
 name poison07       
-numGroups 1          
+numGroups 1  
+u_g 0        
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -126,7 +136,8 @@ end 0
 
 nuclide 11
 name poison08       
-numGroups 1          
+numGroups 1  
+u_g 0        
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -139,7 +150,8 @@ end 0
 
 nuclide 12
 name poison09       
-numGroups 1          
+numGroups 1  
+u_g 0        
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -152,7 +164,8 @@ end 0
 
 nuclide 13
 name poison10      
-numGroups 1          
+numGroups 1 
+u_g 0         
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0
@@ -165,7 +178,8 @@ end 0
 
 nuclide 14
 name poison11      
-numGroups 1          
+numGroups 1   
+u_g 0       
 totalXs 0 #1.1
 absorptionXs 0 #0.9
 fissionXs 0 #0

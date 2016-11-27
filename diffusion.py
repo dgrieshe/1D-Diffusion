@@ -32,7 +32,6 @@ for f in fn.listfn:
 	nGrps = options.numGroups
 	
 	#variables
-	u_g = 0.33
 	n = 0
 
 
@@ -41,7 +40,6 @@ for f in fn.listfn:
 	scatXS = []
 	fisXS = []
 	diffcoef = []
-	summation = []
 	
 	
 	source = np.zeros(nBins*nGrps)
@@ -59,16 +57,6 @@ for f in fn.listfn:
 	#print N.nuclideList
 	#print N.YieldList
 	
-	#summation of gamma and poison nuclide energy densities per bin
-	for i in range(0,nBins):
-		summ = 0
-		j = 0
-		for p in N.poisonList:
-			summ = summ + N.data[p]['yield']*N.data[p]['decayCST']*NDarray[i,j+2]
-			j = j+1
-		summation.append(summ)
-	#print summation
-	#summation is zero if all poisons start at 0 number density
 	
 ###############################################################
 	
@@ -80,32 +68,28 @@ for f in fn.listfn:
 				for i in range(0,nBins):
 					tot = 0
 					scat = 0
+					ugTOP = 0
+					ugBOT = 0
 					j = 0
 					for nuclide in N.nuclideList:
-						tot=tot+N.data[nuclide]['totxs'][k]*NDarray[i,j]
-						scat=scat+N.data[nuclide]['scatxs'][k]*NDarray[i,j]
+						tot = tot + N.data[nuclide]['totxs'][k] * NDarray[i,j]
+						scat = scat + N.data[nuclide]['scatxs'][k] * NDarray[i,j]
+						ugTOP = ugTOP + N.data[nuclide]['ug'] * N.data[nuclide]['scatxs'][k] * NDarray[i,j]
+						ugBOT = ugBOT + N.data[nuclide]['scatxs'][k] * NDarray[i,j]
 						j = j+1
 					totXS.append(tot)
 					scatXS.append(scat)
+					u_g = ugTOP/ugBOT
 					fisXS.append(N.data['fuel']['fisxs'][k]*NDarray[i,0])
-					diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))	
+					diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
 
 		else:
 			D=Depletion()
 			D.var(N, options.powerLevel, options.nYield, options.EperFission)
-			D.forEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, summation)
+			D.forEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, nBins)
 			NDarray = D.NDarray
 			#print NDarray
 			
-			#update summation
-			for i in range(0,nBins):
-				summ = 0
-				j = 0
-				for p in N.poisonList:
-					summ = summ + N.data[p]['yield']*N.data[p]['decayCST']*NDarray[i,j+2]
-					j = j+1
-				summation[i] = summ
-			#print summation
 			
 			plt.plot(NDarray[:,0])
 			plt.savefig('./output/numdensity')
@@ -117,13 +101,18 @@ for f in fn.listfn:
 				for i in range(nBins*(k-1),nBins*k):
 					tot = 0 
 					scat = 0
+					ugTOP = 0
+					ugBOT = 0
 					j = 0
 					for nuclide in N.nuclideList:
 						tot = tot+N.data[nuclide]['totxs'][k]*NDarray[i-nBins*(k-1),j]
 						scat = scat+N.data[nuclide]['scatxs'][k]*NDarray[i-nBins*(k-1),j]
+						ugTOP = ugTOP + N.data[nuclide]['ug'] * N.data[nuclide]['scatxs'][k] * NDarray[i-nBins*(k-1),j]
+						ugBOT = ugBOT + N.data[nuclide]['scatxs'][k] * NDarray[i-nBins*(k-1),j]
 						j = j+1
 					totXS[i] = tot
 					scatXS[i] = scat
+					u_g = ugTOP/ugBOT
 					fisXS[i] = N.data['fuel']['fisxs'][k]*NDarray[i-nBins*(k-1),0]
 					diffcoef[i] = (1/(3*(totXS[i]-u_g*scatXS[i])))
 				

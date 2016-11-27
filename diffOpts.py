@@ -11,6 +11,19 @@ class DiffusionOpts1D:
 		
 		
 		for line in inpFile:  
+
+
+			#Remove trailing white space
+			line = line.strip()
+			#Remove newline characters
+			line = line.strip('\n')
+			#Remove string after comment character (#)
+			line, scratch1, scratch2 = line.partition('#')
+			#Skipe empty lines
+			if len(line) == 0:
+				continue
+
+
 			keyword, arguments = line.split(' ', 1)
 			if keyword == 'length':
 				self.length = arguments
@@ -35,6 +48,11 @@ class DiffusionOpts1D:
 			elif keyword == 'EperFission':
 				self.EperFission = arguments
 				self.EperFission = float(self.EperFission)
+
+			elif keyword == 'PowerNorm[average;explicit]':
+				self.PowerNorm = arguments
+				if (self.PowerNorm != 'average' and self.PowerNorm != 'explicit'):
+					print('Error: PowerNorm entry is invalid. Use average or explicit. Delete all empty lines below it.')
 				
 			else:
 				continue

@@ -28,8 +28,10 @@ class Depletion():
 		self.poisonList=N.poisonList
 		self.decayCST = []
 		self.p_absxs = []
+		self.Yield = []
 		for p in self.poisonList:
 			self.decayCST.append(N.data[p]['decayCST'])
+			self.Yield.append(N.data[p]['yield'])
 			self.p_absxs.append(N.data[p]['absxs'][1])
 			
 		
@@ -43,22 +45,49 @@ class Depletion():
 
 		self.NDarray=NDarray
 		for i in range(0,len(NDarray)):
-			A=np.matrix([[-self.fuel_absxs*flux[i],0],[self.y*self.fuel_fisxs*flux[i],-(self.poison_absxs)*flux[i]-self.poison_decay]])
-			B=np.matrix([[1,0],[0,1]])
-			self.ND=np.matrix([NDarray[i,0],NDarray[i,2]])
+			A = np.matrix([[-self.fuel_absxs*flux[i],0],[self.y*self.fuel_fisxs*flux[i],-(self.poison_absxs)*flux[i]-self.poison_decay]])
+			B = np.matrix([[1,0],[0,1]])
+			self.ND = np.matrix([NDarray[i,0],NDarray[i,2]])
 			NumDensities=np.dot(self.ND,scipy.sparse.linalg.expm_multiply(A,B,start=0,stop=self.t*self.num,num=self.num))
-			self.NDarray[i,0]=NumDensities[len(NumDensities)-1,0]
-			self.NDarray[i,2]=NumDensities[len(NumDensities)-1,1] 
+			self.NDarray[i,0] = NumDensities[len(NumDensities)-1,0]
+			self.NDarray[i,2] = NumDensities[len(NumDensities)-1,1] 
 			
 		
 ###############################################################
 
-	def forEuler(self, flux, NDarray, fisXS, YieldList, summation):
-		self.NDarray = NDarray                                    
+	def forEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType, nBins):
+		self.NDarray = NDarray
+
+		#first value of summation
+		summation = []
+		for n in range(0,nBins):
+			summ = 0
+			m = 0
+			for p in self.poisonList:
+				summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[n,m+2]
+				m = m+1
+			summation.append(summ)
+		#print summation
+
+
+
+        #Begin forEuler depletion
 		for i in range(0,len(NDarray)):
 			
 			#flux is already multiplied by delta
 			#see input for forEuler
+
+
+
+			#first power normalization
+			if PowerNormType == 'average':
+				power = flux[:]*self.energyPerFission*fisXS[:]
+			elif PowerNormType == 'explicit':
+				power = (1-sum(YieldList))*flux[:]*self.energyPerFission*fisXS[:]+summation[:]
+			flux[:] = flux[:]*self.powerLevel/sum(power)
+
+
+
 				
 			#A is the matrix with the microscopic xs and decay constants
 			self.A = np.zeros((len(self.poisonList)+1,len(self.poisonList)+1))
@@ -71,9 +100,12 @@ class Depletion():
 							self.A[row,col] = YieldList[row-1]*self.energyPerFission*self.fuel_fisxs*flux[i]
 					else:
 						if row == col:
-							self.A[row,col]=-(self.p_absxs[row-1]*flux[i]+self.decayCST[row-1])
+							self.A[row,col] = -(self.p_absxs[row-1]*flux[i]+self.decayCST[row-1])
 			#print self.A
 			
+
+
+
 			#ND is the matrix with the number densities
 			self.ND=np.zeros(len(self.poisonList)+1)   
 			for row in range(0,len(self.ND)):
@@ -82,23 +114,48 @@ class Depletion():
 				else:
 					for n in range(0,len(self.poisonList)):
 						self.ND[row]=NDarray[i,n+2]
+
+
+
 			
 			#sub-stepping
-			j=self.t
-			while j<=self.t*self.num:
-				
+			j = self.t
+			SSnum = 0
+
+			while j <= self.t*self.num:
+
 				#Flux is already multiplied by delta
 				#See input for forEuler
 				
-				#Power normalization
-				power1 = flux[:]*self.energyPerFission*fisXS[:]
-				power2 = (1-sum(YieldList))*flux[:]*self.energyPerFission*fisXS[:]+summation[:]
-				flux[:]=flux[:]*self.powerLevel/power2[0]
 				if j==self.t:
-					NumDensities=np.array([self.ND+j*np.dot(self.A,self.ND)])
+					NumDensities = np.array([self.ND+j*np.dot(self.A,self.ND)])
+
 				else:
-					NumDensities=np.concatenate((NumDensities,np.array([self.ND+j*np.dot(self.A,self.ND)])))
+
+					#Power renormalization
+					if PowerNormType == 'average':
+						power = flux[:]*self.energyPerFission*fisXS[:]
+					elif PowerNormType == 'explicit':
+						power = (1-sum(YieldList))*flux[:]*self.energyPerFission*fisXS[:]+summation[:]
+					flux[:] = flux[:]*self.powerLevel/sum(power)
+
+					NumDensities = np.concatenate((NumDensities,np.array([self.ND+j*np.dot(self.A,self.ND)])))
 				j=j+self.t
+
+
+
+				#update summation between substeps
+				summ = 0
+				m = 0
+				for p in self.poisonList:
+					summ = summ + self.Yield[m]*self.decayCST[m]*NumDensities[SSnum,m+1]
+					m = m+1
+				summation[i] = summ
+
+				SSnum = SSnum+1
+
+			#print NumDensities
+
 			
 			
 			#NumDensities=np.array(self.ND+self.t*np.dot(self.ND,A))

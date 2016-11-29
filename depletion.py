@@ -14,18 +14,19 @@ class Depletion():
 
 ###############################################################
 
-	def var(self, N, powerLevel, nYield, EperFission):
+	def var(self, N, powerLevel, nYield, EperFission, nBins):
 		
 		self.t = 0.0001
 		self.num = 5
 		#fission neutron yield
 		self.y = nYield
 		self.energyPerFission = EperFission
-		self.powerLevel = powerLevel
+		self.powerLevel = powerLevel/nBins
 		#cross sections
 		self.fuel_absxs=N.data['fuel']['absxs'][1]
 		self.fuel_fisxs=N.data['fuel']['fisxs'][1]
 		self.poisonList=N.poisonList
+		self.n=len(N.nuclideList)-len(N.poisonList)
 		self.decayCST = []
 		self.p_absxs = []
 		self.Yield = []
@@ -55,36 +56,27 @@ class Depletion():
 		
 ###############################################################
 
-	def forEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType, nBins):
+	def forEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType):
 		self.NDarray = NDarray
 
-		#first value of summation
-		summation = []
-		for n in range(0,nBins):
-			summ = 0
-			m = 0
-			for p in self.poisonList:
-				summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[n,m+2]
-				m = m+1
-			summation.append(summ)
-		#print summation
-
-
-
-        #Begin forEuler depletion
 		for i in range(0,len(NDarray)):
 			
 			#flux is already multiplied by delta
 			#see input for forEuler
 
 
-
 			#first power normalization
+			summation = 0
+			m = 0
+			for p in self.poisonList:
+				summation = summation + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
+				m = m+1
+
 			if PowerNormType == 'average':
-				power = flux[:]*self.energyPerFission*fisXS[:]
+				power = flux[i]*self.energyPerFission*fisXS[i]
 			elif PowerNormType == 'explicit':
-				power = (1-sum(YieldList))*flux[:]*self.energyPerFission*fisXS[:]+summation[:]
-			flux[:] = flux[:]*self.powerLevel/sum(power)
+				power = (1-sum(YieldList))*flux[i]*self.energyPerFission*fisXS[i]+summation
+			flux[i] = flux[i]*self.powerLevel/power
 
 
 
@@ -134,10 +126,10 @@ class Depletion():
 
 					#Power renormalization
 					if PowerNormType == 'average':
-						power = flux[:]*self.energyPerFission*fisXS[:]
+						power = flux[i]*self.energyPerFission*fisXS[i]
 					elif PowerNormType == 'explicit':
-						power = (1-sum(YieldList))*flux[:]*self.energyPerFission*fisXS[:]+summation[:]
-					flux[:] = flux[:]*self.powerLevel/sum(power)
+						power = (1-sum(YieldList))*flux[i]*self.energyPerFission*fisXS[i]+summation
+					flux[i] = flux[i]*self.powerLevel/power
 
 					NumDensities = np.concatenate((NumDensities,np.array([self.ND+j*np.dot(self.A,self.ND)])))
 				j=j+self.t
@@ -145,12 +137,11 @@ class Depletion():
 
 
 				#update summation between substeps
-				summ = 0
+				summation = 0
 				m = 0
 				for p in self.poisonList:
-					summ = summ + self.Yield[m]*self.decayCST[m]*NumDensities[SSnum,m+1]
+					summation = summation + self.Yield[m]*self.decayCST[m]*NumDensities[SSnum,m+1]
 					m = m+1
-				summation[i] = summ
 
 				SSnum = SSnum+1
 
@@ -164,7 +155,7 @@ class Depletion():
 			#updating NDarray
 			self.NDarray[i,0]=NumDensities[self.num-1,0]
 			for n in range (0,len(self.poisonList)):
-				self.NDarray[i,n+2]=NumDensities[self.num-1,1] 
+				self.NDarray[i,n+self.n]=NumDensities[self.num-1,1] 
 
 		
 ###############################################################

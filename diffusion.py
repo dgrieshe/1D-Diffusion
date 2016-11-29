@@ -21,7 +21,7 @@ fn.GetFileName()
 
 for f in fn.listfn:
 	print f
-	#retains only the number associated with the input file. Ex: "input1" becomes "1" 
+	#retains only the number associated with the input file: "input1" becomes "1" 
 	#This was made to make the output name nice
 	name = f[len(f)-5]
 	
@@ -54,7 +54,7 @@ for f in fn.listfn:
 	M.createNDarray(nBins,n)
 	NDarray = M.NDarray
 	#print NDarray
-	#print N.nuclideList
+	print len(N.nuclideList)-len(N.poisonList)
 	#print N.YieldList
 	
 	
@@ -85,8 +85,8 @@ for f in fn.listfn:
 
 		else:
 			D=Depletion()
-			D.var(N, options.powerLevel, options.nYield, options.EperFission)
-			D.forEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, nBins)
+			D.var(N, options.powerLevel, options.nYield, options.EperFission, nBins)
+			D.forEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm)
 			NDarray = D.NDarray
 			#print NDarray
 			
@@ -148,8 +148,7 @@ for f in fn.listfn:
 		A.invertA()
 		sol = Solve()
 		sol.solve(options, A.inv, source, fisXS, NDarray, N.data)
-		
-	results = Plotter()
-	results.plot(sol.x,1,nBins,nGrps,name,n)
+		results = Plotter()
+		results.plot(sol.x,1,nBins,nGrps,name,n)
     
 ###############################################################################

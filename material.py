@@ -20,6 +20,7 @@ class Material():
 		inpFile = open('Materials/NumDensities.inp','r')
 		#Create list of poison number densities
 		self.poisonListND = []
+		self.nuclideListND = []
 		
 		
 		for line in inpFile:
@@ -30,7 +31,7 @@ class Material():
 			line = line.strip('\n')
 			#Remove string after comment character (#)
 			line, scratch1, scratch2 = line.partition('#')
-			#Skip empty lines 
+			#Skip empty lines
 			if len(line) == 0:
 				continue  
 				
@@ -39,27 +40,30 @@ class Material():
 				continue
 			else:
 				keyword, arguments = line.split(' ',1)
-				if keyword == 'fuel':
-					self.NDfuel = float(arguments)
-					
-				elif keyword == 'moderator':
-					self.NDmod = float(arguments)
-					
-				elif keyword[:-2] == 'poison':
-					self.NDpoison = float(arguments)
-					self.poisonListND.append(self.NDpoison)
+				self.nuclideListND.append(float(arguments))
+
+				#if keyword == 'fuel':
+				#	self.NDfuel = float(arguments)
+				#	
+				#elif keyword == 'moderator':
+				#	self.NDmod = float(arguments)
+				#	
+				#elif keyword[:-2] == 'poison':
+				#	self.NDpoison = float(arguments)
+				#	self.poisonListND.append(self.NDpoison)
 
 ###############################################################
 					
 	def createNDarray(self,nBins,n):
 		
 		if n==0:
-			self.NDarray=np.zeros((nBins,len(self.poisonListND)+2))
+			self.NDarray=np.zeros((nBins,len(self.nuclideListND)))
 			for i in range(0,nBins):
-				self.NDarray[i,0]=self.NDfuel
-				self.NDarray[i,1]=self.NDmod
-				for j in range(0,len(self.poisonListND)):
-					self.NDarray[i,j+2]=self.poisonListND[j]
+				self.NDarray[i]=self.nuclideListND
+				#self.NDarray[i,0]=self.NDfuel
+				#self.NDarray[i,1]=self.NDmod
+				#for j in range(0,len(self.poisonListND)):
+				#	self.NDarray[i,j+2]=self.poisonListND[j]
 		
 	
 ############################################################### 

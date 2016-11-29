@@ -54,7 +54,7 @@ for f in fn.listfn:
 	M.createNDarray(nBins,n)
 	NDarray = M.NDarray
 	#print NDarray
-	print len(N.nuclideList)-len(N.poisonList)
+	#print len(N.nuclideList)-len(N.poisonList)
 	#print N.YieldList
 	
 	

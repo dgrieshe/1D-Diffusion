@@ -2,7 +2,7 @@ length 350
 rightBC escape 
 leftBC escape 
 numgroups 1
-numbins 700
+numbins 350
 powerLevel 3000
 FneutronYield 2.3
 EperFission 20

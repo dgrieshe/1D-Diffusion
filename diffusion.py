@@ -85,7 +85,7 @@ for f in fn.listfn:
 
 		else:
 			D=Depletion()
-			D.var(N, options.powerLevel, options.nYield, options.EperFission, nBins)
+			D.var(N, options.powerLevel, options.nYield, options.EperFission)
 			D.forEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm)
 			NDarray = D.NDarray
 			#print NDarray

@@ -14,14 +14,14 @@ class Depletion():
 
 ###############################################################
 
-	def var(self, N, powerLevel, nYield, EperFission, nBins):
+	def var(self, N, powerLevel, nYield, EperFission):
 		
 		self.t = 0.0001
 		self.num = 5
 		#fission neutron yield
 		self.y = nYield
 		self.energyPerFission = EperFission
-		self.powerLevel = powerLevel/nBins
+		self.powerLevel = powerLevel
 		#cross sections
 		self.fuel_absxs=N.data['fuel']['absxs'][1]
 		self.fuel_fisxs=N.data['fuel']['fisxs'][1]
@@ -59,26 +59,30 @@ class Depletion():
 	def forEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType):
 		self.NDarray = NDarray
 
+		#first power normalization
+		power = np.zeros(len(NDarray))
+		summation = np.zeros(len(NDarray))
+
+		for i in range(0,len(NDarray)):
+			summ = 0
+			m = 0
+			for p in self.poisonList:
+				summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
+				m = m+1
+			summation[i] = summ
+
+		if PowerNormType == 'average':
+			power[:] = flux[:]*self.energyPerFission*fisXS[:]
+		elif PowerNormType == 'explicit':
+			power[:] = (1-sum(YieldList))*flux[:]*self.energyPerFission*fisXS[:]+summation[:]
+		flux[:] = flux[:]*self.powerLevel/sum(power)
+
+
+        #begin forEuler
 		for i in range(0,len(NDarray)):
 			
 			#flux is already multiplied by delta
 			#see input for forEuler
-
-
-			#first power normalization
-			summation = 0
-			m = 0
-			for p in self.poisonList:
-				summation = summation + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
-				m = m+1
-
-			if PowerNormType == 'average':
-				power = flux[i]*self.energyPerFission*fisXS[i]
-			elif PowerNormType == 'explicit':
-				power = (1-sum(YieldList))*flux[i]*self.energyPerFission*fisXS[i]+summation
-			flux[i] = flux[i]*self.powerLevel/power
-
-
 
 				
 			#A is the matrix with the microscopic xs and decay constants
@@ -126,10 +130,10 @@ class Depletion():
 
 					#Power renormalization
 					if PowerNormType == 'average':
-						power = flux[i]*self.energyPerFission*fisXS[i]
+						poweri = flux[i]*self.energyPerFission*fisXS[i]
 					elif PowerNormType == 'explicit':
-						power = (1-sum(YieldList))*flux[i]*self.energyPerFission*fisXS[i]+summation
-					flux[i] = flux[i]*self.powerLevel/power
+						poweri = (1-sum(YieldList))*flux[i]*self.energyPerFission*fisXS[i]+summation[i]
+					flux[i] = flux[i]*power[i]/poweri
 
 					NumDensities = np.concatenate((NumDensities,np.array([self.ND+j*np.dot(self.A,self.ND)])))
 				j=j+self.t
@@ -137,11 +141,12 @@ class Depletion():
 
 
 				#update summation between substeps
-				summation = 0
+				summ = 0
 				m = 0
 				for p in self.poisonList:
-					summation = summation + self.Yield[m]*self.decayCST[m]*NumDensities[SSnum,m+1]
+					summ = summ + self.Yield[m]*self.decayCST[m]*NumDensities[SSnum,m+1]
 					m = m+1
+				summation[i] = summ
 
 				SSnum = SSnum+1
 

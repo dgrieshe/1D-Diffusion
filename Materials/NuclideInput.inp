@@ -6,7 +6,7 @@ numGroups 1
 u_g 0.0113
 totalXs 4 #1.01 
 absorptionXs 3 #0.3
-fissionXs 2 #0.1           
+fissionXs 2.5 #0.1           
 scatterXs 1 #0.71        
 Gscat1 1 #0     
                          

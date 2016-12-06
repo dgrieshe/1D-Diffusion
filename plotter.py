@@ -24,7 +24,7 @@ class Plotter:
 			groups.append('group%i' %k)
 			colors=['r','b','g','o','n','p']	
 			groups[k-1], = plt.plot(x_group, colors[k-1], label=groups[k-1])
-			#plt.ylim([0,0.5])
+			plt.ylim([0,0.02])
 			plt.ylabel('flux')
 			plt.legend(groups)
 			plt.savefig('./output/figure'+name+n)

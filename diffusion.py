@@ -1,10 +1,10 @@
-#last edited by Miriam Rathbun on 8/15/2016
-#This script solves the discrete diffusion equations
+# Last edited by Miriam Rathbun on 12/5/2016
+# This script solves the discrete diffusion equations
 
 
 
-#imports
-#use sudo apt-get install python.numpy if needed
+# Imports
+# Use sudo apt-get install python.numpy if needed
 import numpy as np 
 import matplotlib.pyplot as plt
 from diffOpts import *
@@ -21,19 +21,18 @@ fn.GetFileName()
 
 for f in fn.listfn:
 	print f
-	#retains only the number associated with the input file: "input1" becomes "1" 
-	#This was made to make the output name nice
+	# Retains only the number associated with the input file: "input1" becomes "1" 
+	# This was made to make the output name nice
 	name = f[len(f)-5]
 	
-	#read input
+	# read input
 	options = DiffusionOpts1D()
 	options.read(f)
 	nBins = options.numBins
 	nGrps = options.numGroups
 	
-	#variables
+	# Variables
 	n = 0
-
 
 	totXS = []
 	absXS = []
@@ -43,9 +42,10 @@ for f in fn.listfn:
 	
 	
 	source = np.zeros(nBins*nGrps)
-	#group-to-group scattering
+	# Group-to-group scattering
 	Gscat = np.zeros((nBins,nGrps*nGrps))
 	sourceGroup = []
+	#print Gscat
 	
 	N = Nuclides()
 	N.read()
@@ -61,8 +61,11 @@ for f in fn.listfn:
 ###############################################################
 	
 	while n<15:
-		#first iteration: creates macroscopic cross section arrays
-		#totXS, scatXS, and diffcoef with original number densities
+		# First iteration: creates macroscopic cross section arrays
+		# totXS, scatXS, and diffcoef with original number densities
+
+		# FUTURE WORK: make subroutine that updates totXS, scatXS, fisXS, and diffcoef
+		# FUTURE WORK: collapse the n=0 and n!=0 loops
 		if n == 0:
 			for k in range(1,nGrps+1):
 				for i in range(0,nBins):
@@ -72,16 +75,18 @@ for f in fn.listfn:
 					ugBOT = 0
 					j = 0
 					for nuclide in N.nuclideList:
-						tot = tot + N.data[nuclide]['totxs'][k] * NDarray[i,j]
-						scat = scat + N.data[nuclide]['scatxs'][k] * NDarray[i,j]
-						ugTOP = ugTOP + N.data[nuclide]['ug'] * N.data[nuclide]['scatxs'][k] * NDarray[i,j]
-						ugBOT = ugBOT + N.data[nuclide]['scatxs'][k] * NDarray[i,j]
+						tot = tot + N.data[nuclide]['totxs'][k]*NDarray[i,j]
+						scat = scat + N.data[nuclide]['scatxs'][k]*NDarray[i,j]
+						ugTOP = ugTOP + N.data[nuclide]['ug']*N.data[nuclide]['scatxs'][k]*NDarray[i,j]
+						ugBOT = ugBOT + N.data[nuclide]['scatxs'][k]*NDarray[i,j]
 						j = j+1
 					totXS.append(tot)
 					scatXS.append(scat)
 					u_g = ugTOP/ugBOT
 					fisXS.append(N.data['fuel']['fisxs'][k]*NDarray[i,0])
 					diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
+
+
 
 		else:
 			D=Depletion()
@@ -95,60 +100,68 @@ for f in fn.listfn:
 			plt.savefig('./output/numdensity')
 			
 			total = totXS
-			#further iterations: updates totXS, scatXS, and diffcoef with new number densities
-			#because the XS arrays have length nBins*nGrps, NDarray must iterate as i-nBins*(k-1)
+			# Further iterations: updates totXS, scatXS, and diffcoef with new number densities
+			# Because the XS arrays have length nBins*nGrps, NDarray must iterate as i-nBins*(k-1)
 			for k in range(1, nGrps+1):
 				for i in range(nBins*(k-1),nBins*k):
+
+					# Reset local variables
 					tot = 0 
 					scat = 0
 					ugTOP = 0
 					ugBOT = 0
 					j = 0
 					for nuclide in N.nuclideList:
-						tot = tot+N.data[nuclide]['totxs'][k]*NDarray[i-nBins*(k-1),j]
-						scat = scat+N.data[nuclide]['scatxs'][k]*NDarray[i-nBins*(k-1),j]
-						ugTOP = ugTOP + N.data[nuclide]['ug'] * N.data[nuclide]['scatxs'][k] * NDarray[i-nBins*(k-1),j]
-						ugBOT = ugBOT + N.data[nuclide]['scatxs'][k] * NDarray[i-nBins*(k-1),j]
+						tot = tot + N.data[nuclide]['totxs'][k]*NDarray[i-nBins*(k-1),j]
+						scat = scat + N.data[nuclide]['scatxs'][k]*NDarray[i-nBins*(k-1),j]
+						ugTOP = ugTOP + N.data[nuclide]['ug']*N.data[nuclide]['scatxs'][k]*NDarray[i-nBins*(k-1),j]
+						ugBOT = ugBOT + N.data[nuclide]['scatxs'][k]*NDarray[i-nBins*(k-1),j]
 						j = j+1
 					totXS[i] = tot
 					scatXS[i] = scat
 					u_g = ugTOP/ugBOT
 					fisXS[i] = N.data['fuel']['fisxs'][k]*NDarray[i-nBins*(k-1),0]
 					diffcoef[i] = (1/(3*(totXS[i]-u_g*scatXS[i])))
+
 				
-		#fills the group-to-group scattering/transition matrix per bin
-		for i in range (0,nBins):
+		# Fills/Updates the group-to-group scattering/transition matrix per bin
+		for i in range(0,nBins):
 			count = 1
 			gcount = 1
 			for g in range(0,nGrps*nGrps):
 				j = 0
-				for nuclides in N.nuclideList:
-					Gscat[i,g] = N.data[nuclide]['Ex'+str(gcount)][count]*NDarray[i,j]
+				GscatXS = 0
+				for nuclide in N.nuclideList:
+					GscatXS = GscatXS + N.data[nuclide]['Ex'+str(gcount)][count]*NDarray[i,j]
+					#print N.data[nuclide]['Ex'+str(gcount)][count]
+					#print NDarray[i,j]
+					#print GscatXS
 					j = j+1
+				Gscat[i,g] = GscatXS
 				count = count+1
 				if count == nGrps+1:
 					count = 1
 					gcount = gcount+1
+		#print Gscat
 				
 		
-		#Builds the linear system of equations
+		# Builds the linear system of equations
 		A=Construct()
 		A.constructA(options, diffcoef, Gscat, totXS, NDarray)
 		
 		n = n+1
 		
-		#sets the initial value of the source
-		for i in range (0,len(source)):
-			source[i] = 1/options.length
+		# Sets the initial value of the source
+		source[:] = 1/options.length
 
 ###############################################################################
-#calculates the solution x to Ax=B 	
+# Calculates the solution x to Ax=B 	
 
 
 		A.invertA()
 		sol = Solve()
-		sol.solve(options, A.inv, source, fisXS, NDarray, N.data)
-		results = Plotter()
-		results.plot(sol.x,1,nBins,nGrps,name,n)
+		sol.solve(options, A.inv, source, fisXS, NDarray, N.data, n)
+	results = Plotter()
+	results.plot(sol.x,1,nBins,nGrps,name,n)
     
 ###############################################################################

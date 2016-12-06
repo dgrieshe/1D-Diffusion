@@ -2,8 +2,8 @@ length 350
 rightBC escape 
 leftBC escape 
 numgroups 1
-numbins 350
+numbins 700
 powerLevel 3000
 FneutronYield 2.3
-EperFission 20
+EperFission 0.0000000000000000338
 PowerNorm[average;explicit] explicit

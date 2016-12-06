@@ -4,11 +4,11 @@ nuclide 1
 name fuel
 numGroups 1
 u_g 0.0113
-totalXs 4 #1.01 
-absorptionXs 3 #0.3
-fissionXs 2.5 #0.1           
-scatterXs 1 #0.71        
-Gscat1 1 #0     
+totalXs 0.0000000000000000000000243 #1.01 
+absorptionXs 0.0000000000000000000000076 #0.3
+fissionXs 0.000000000000000000000007 #0.1           
+scatterXs 0.0000000000000000000000167 #0.71        
+Gscat1 0.0000000000000000000000167 #0     
                          
 end 0                
           
@@ -16,11 +16,11 @@ nuclide 2
 name moderator
 numGroups 1   
 u_g 0.324
-totalXs 10.66 #1               
-absorptionXs 0.66 #0.01
+totalXs 0.00000000000000000000010366 #1               
+absorptionXs 0.00000000000000000000000066 #0.01
 fissionXs 0 #0
-scatterXs 10 #0.99
-Gscat1 10 #0
+scatterXs 0.000000000000000000000103 #0.99
+Gscat1 0.000000000000000000000103 #0
 
 end 0
 

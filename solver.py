@@ -34,7 +34,7 @@ class Solve:
 			lastSource[:] = source[:]
                         
 			# Take the dot product of A-inverse and B to solve for
-            # the flux and store the flux in variable x.
+            		# the flux and store the flux in variable x.
 
 			self.x = np.dot(Ainv,source)
 
@@ -47,14 +47,14 @@ class Solve:
 			k = sum(source)
                         source[:] = source[:]/k
 
-			# Calculate the difference in the source between
+			# Calculate the relative difference in the source between
         		# consecutive iterations and take the infinity norm.
 
-			errorDiff[:] = abs(lastSource[:]-source[:])
+			errorDiff[:] = abs((lastSource[:]-source[:])/lastSource[:])
 			error = max(errorDiff)
 
 			# Print statement to show eigenvalue convergence by
-            # iteration.
+            		# iteration.
 			#print(j,k,error)
 
 		#print self.x

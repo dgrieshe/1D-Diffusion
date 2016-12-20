@@ -1,6 +1,6 @@
 material
-fuel 22300000000000000000000
-moderator 335000000000000000
+fuel 2.23e22
+moderator 0.0000335e22
 #boron 0.0
 poison01 0.0                          
 poison02 0.0     

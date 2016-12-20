@@ -1,4 +1,4 @@
-# Last edited by Miriam Rathbun on 12/5/2016
+# Last edited by Miriam Rathbun on 12/19/2016
 # This script solves the discrete diffusion equations
 
 
@@ -31,6 +31,7 @@ for f in fn.listfn:
 	nBins = options.numBins
 	nGrps = options.numGroups
 	
+	
 	# Variables
 	n = 0
 
@@ -60,7 +61,7 @@ for f in fn.listfn:
 	
 ###############################################################
 	
-	while n<15:
+	while n<5:
 		# First iteration: creates macroscopic cross section arrays
 		# totXS, scatXS, and diffcoef with original number densities
 

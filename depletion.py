@@ -1,5 +1,5 @@
 # class to compute depletion
-# Last modified by Miriam Rathbun on 12-5-2016
+# Last modified by Miriam Rathbun on 12-19-2016
 
 import numpy as np
 import scipy.sparse.linalg
@@ -27,7 +27,8 @@ class Depletion():
 		self.fuel_absxs = N.data['fuel']['absxs'][1]
 		self.fuel_fisxs = N.data['fuel']['fisxs'][1]
 		self.poisonList = N.poisonList
-		# self.n is the number of columns in NDarray before the poisons start
+		# self.n is the number of columns in NDarray before 
+		    # the poisons start
 		self.n = len(N.nuclideList)-len(N.poisonList)
 		#print self.n
 		self.decayCST = []
@@ -41,10 +42,10 @@ class Depletion():
 		
 ###############################################################
 		
-	def matrixEXP(self,flux,NDarray):
+	def matrixEXP(self, flux, NDarray):
 		
-		# This method only accommodates 1 poison nuclide
-		# It was not updated for more than 1 poison
+		# This method only accommodates 1 poison nuclide.
+		# It was not updated for more than 1 poison.
 		
 
 		self.NDarray = NDarray
@@ -60,7 +61,8 @@ class Depletion():
 ###############################################################
 
 	def forEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType):
-		# FUTURE WORK: this part needs to be updated for boron burnup
+		# FUTURE WORK: this part needs to be updated for 
+		# boron burnup
 
 		self.NDarray = NDarray
 		#print("NDarray")
@@ -79,8 +81,9 @@ class Depletion():
 			summation[i] = summ
 
 		# Flux is already multiplied by delta
-		# See input for forEuler
-		# I can use fisXS here because no depletion has yet occured
+		    # See input for forEuler
+		# I can use fisXS here because no depletion has yet 
+		    # occured
 
 		if PowerNormType == 'average':
 			power[:] = flux[:]*self.energyPerFission*fisXS[:]
@@ -100,7 +103,8 @@ class Depletion():
 		for i in range(0,len(NDarray)):
 
 				
-			# self.A is the matrix with the microscopic xs and decay constants
+			# self.A is the matrix with the microscopic xs and 
+			    # decay constants
 			self.A = np.zeros((len(self.poisonList)+1,len(self.poisonList)+1))
 			for row in range(0,len(self.A)):
 				for col in range(0,len(self.A)):
@@ -133,7 +137,7 @@ class Depletion():
 			j = self.t
 			# SSnum is the sub-step number
 			# There will be self.num number of sub-steps
-			# And SSnum keeps counts which one is occuring
+			    # and SSnum keeps counts which one is occuring
 			SSnum = 0
 
 			while j <= self.t*self.num:
@@ -147,7 +151,8 @@ class Depletion():
 					# Power renormalization
 					# Flux is already multiplied by delta
 					# See input for forEuler
-					# I need to recalc fisXS because fuel number density has changed
+					# I need to recalc fisXS because fuel 
+					    # number density has changed
 					if PowerNormType == 'average':
 						poweri = flux[i]*self.energyPerFission*self.fuel_fisxs*NumDensities[SSnum,0]
 						flux[i] = flux[i]*power[i]/poweri
@@ -193,7 +198,8 @@ class Depletion():
 			#print self.num
 
 			# Updating NDarray
-			# self.n is the number of columns in NDarray before the poisons start
+			# self.n is the number of columns in NDarray 
+			    # before the poisons start
 			self.NDarray[i,0] = NumDensities[self.num-1,0]
 			for n in range (0,len(self.poisonList)):
 				self.NDarray[i,n+self.n] = NumDensities[self.num-1,n+1] 

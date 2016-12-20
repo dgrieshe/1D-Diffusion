@@ -53,6 +53,10 @@ class DiffusionOpts1D:
 				self.PowerNorm = arguments
 				if (self.PowerNorm != 'average' and self.PowerNorm != 'explicit'):
 					print('Error: PowerNorm entry is invalid. Use average or explicit. Delete all empty lines below it.')
+
+			elif keyword == 'ConvergeError':
+				self.ConvError = arguments
+				self.ConvError = float(self.ConvError)
 				
 			else:
 				continue

@@ -20,9 +20,7 @@ class Solve:
                 # Loop until the source difference between iterations falls
                 # below the specified threshold.
                 
-                # FUTURE WORK: read the threshold from the input file
-                
-		while error > 10 ** (-5):
+		while error > options.ConvError:
                 	# Reset local variables
 			k = 0
 			j = j+1
@@ -34,27 +32,28 @@ class Solve:
 			lastSource[:] = source[:]
                         
 			# Take the dot product of A-inverse and B to solve for
-            		# the flux and store the flux in variable x.
+            # the flux and store the flux in variable x.
 
-			self.x = np.dot(Ainv,source)
+			self.x = np.dot(Ainv,source[:]*options.delta)
+			#print sum(source[:]*options.delta)
 
 			# Calculate the fission source in each spatial bin
 
-			source[:] = self.x[:]*options.delta*options.nYield*fisXS[:]
+			source[:] = self.x[:]*options.nYield*fisXS[:]
                         			
 			# Perform the source normalization by dividing by k_eff
 
-			k = sum(source)
+			k = sum(source)*options.delta
                         source[:] = source[:]/k
 
 			# Calculate the relative difference in the source between
-        		# consecutive iterations and take the infinity norm.
+        	# consecutive iterations and take the infinity norm.
 
 			errorDiff[:] = abs((lastSource[:]-source[:])/lastSource[:])
 			error = max(errorDiff)
 
 			# Print statement to show eigenvalue convergence by
-            		# iteration.
+            # iteration.
 			#print(j,k,error)
 
 		#print self.x

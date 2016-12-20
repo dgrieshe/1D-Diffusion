@@ -51,7 +51,7 @@ class Construct():
 						while b >= nBins:
 							j=j+1
 							b=col-nBins*k*j
-						self.A[row,col]=-Gscat[a,nGrps*i*k+j]
+						self.A[row,col]=-Gscat[a,nGrps*i*k+j]*d
 
 		#print self.A
 				

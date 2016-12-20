@@ -1,4 +1,4 @@
-# class containing nuclide objects in a dictionary. 
+# Class containing nuclide objects in a dictionary. 
 
 class Nuclides:
     # Initialization (constructor) routine
@@ -14,28 +14,28 @@ class Nuclides:
         import numpy as np
         inpFile = open('Materials/NuclideInput.inp', 'r')
         self.data={} 
-        #Reset n which indicates which line of "Gscat" to read
+        # Reset n which indicates which line of "Gscat" to read
         n=0
-        #Reset poisonFLAG which indicates if nuclide is a poison
+        # Reset poisonFLAG which indicates if nuclide is a poison
         poisonFLAG = 0
-        #Create list of poisons
+        # Create list of poisons
         self.poisonList = []
-        #Create list of nuclides
+        # Create list of nuclides
         self.nuclideList = []
-        #Create list of yield figures
+        # Create list of yield figures
         self.YieldList = []
         
         
         for line in inpFile:  
             
             
-            #Remove trailing whitespace
+            # Remove trailing whitespace
             line = line.strip()
-            #Remove newline characters
+            # Remove newline characters
             line = line.strip('\n')
-            #Remove string after comment character (#)
+            # Remove string after comment character (#)
             line, scratch1, scratch2 = line.partition('#')
-            #Skip empty lines  
+            # Skip empty lines  
             if len(line) == 0:
                 continue   
                 
@@ -86,7 +86,7 @@ class Nuclides:
             elif keyword[:-1] == 'Gscat':  
                 for i in range(0, self.nGroups):
                     self.Gscat[n,i]=float(line.split(' ',self.nGroups)[i+1])
-                #next line will read the following line of Gscat
+                # Next line will read the following line of Gscat
                 n=n+1
                 
                 

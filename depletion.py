@@ -80,8 +80,8 @@ class Depletion():
 				m = m+1
 			summation[i] = summ
 
-		# Flux is already multiplied by delta
-		    # See input for forEuler
+		# Flux is already multiplied by delta. See input 
+		    # for forEuler
 		# I can use fisXS here because no depletion has yet 
 		    # occured
 

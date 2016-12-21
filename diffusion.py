@@ -21,8 +21,9 @@ fn.GetFileName()
 
 for f in fn.listfn:
 	print f
-	# Retains only the number associated with the input file: "input1" becomes "1" 
-	# This was made to make the output name nice
+	# Retains only the number associated with the input
+	    # file: "input1" becomes "1" This makes the 
+	    # output name nice
 	name = f[len(f)-5]
 	
 	# read input
@@ -30,7 +31,7 @@ for f in fn.listfn:
 	options.read(f)
 	nBins = options.numBins
 	nGrps = options.numGroups
-	
+
 	
 	# Variables
 	n = 0
@@ -61,30 +62,34 @@ for f in fn.listfn:
 	
 ###############################################################
 	
-	while n<5:
-		# First iteration: creates macroscopic cross section arrays
-		# totXS, scatXS, and diffcoef with original number densities
+	while n<3:
+		# First iteration: creates macroscopic cross section
+		    # arrays totXS, scatXS, and diffcoef with original
+		    # number densities
 
-		# FUTURE WORK: make subroutine that updates totXS, scatXS, fisXS, and diffcoef
+		# FUTURE WORK: make subroutine that updates totXS,
+		    # scatXS, fisXS, and diffcoef
 		# FUTURE WORK: collapse the n=0 and n!=0 loops
 		if n == 0:
 			for k in range(1,nGrps+1):
 				for i in range(0,nBins):
 					tot = 0
 					scat = 0
+					fis = 0
 					ugTOP = 0
 					ugBOT = 0
 					j = 0
 					for nuclide in N.nuclideList:
 						tot = tot + N.data[nuclide]['totxs'][k]*NDarray[i,j]
 						scat = scat + N.data[nuclide]['scatxs'][k]*NDarray[i,j]
+						fis = fis + N.data[nuclide]['fisxs'][k]*NDarray[i,j]
 						ugTOP = ugTOP + N.data[nuclide]['ug']*N.data[nuclide]['scatxs'][k]*NDarray[i,j]
 						ugBOT = ugBOT + N.data[nuclide]['scatxs'][k]*NDarray[i,j]
 						j = j+1
 					totXS.append(tot)
 					scatXS.append(scat)
+					fisXS.append(fis)
 					u_g = ugTOP/ugBOT
-					fisXS.append(N.data['fuel']['fisxs'][k]*NDarray[i,0])
 					diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
 
 
@@ -101,31 +106,36 @@ for f in fn.listfn:
 			plt.savefig('./output/numdensity')
 			
 			total = totXS
-			# Further iterations: updates totXS, scatXS, and diffcoef with new number densities
-			# Because the XS arrays have length nBins*nGrps, NDarray must iterate as i-nBins*(k-1)
+			# Further iterations: updates totXS, scatXS, and
+			    # diffcoef with new number densities Because the 
+			    # XS arrays have length nBins*nGrps, NDarray must 
+			    # iterate as i-nBins*(k-1)
 			for k in range(1, nGrps+1):
 				for i in range(nBins*(k-1),nBins*k):
 
 					# Reset local variables
 					tot = 0 
 					scat = 0
+					fis = 0
 					ugTOP = 0
 					ugBOT = 0
 					j = 0
 					for nuclide in N.nuclideList:
 						tot = tot + N.data[nuclide]['totxs'][k]*NDarray[i-nBins*(k-1),j]
 						scat = scat + N.data[nuclide]['scatxs'][k]*NDarray[i-nBins*(k-1),j]
+						fis = fis + N.data[nuclide]['fisxs'][k]*NDarray[i-nBins*(k-1),j]
 						ugTOP = ugTOP + N.data[nuclide]['ug']*N.data[nuclide]['scatxs'][k]*NDarray[i-nBins*(k-1),j]
 						ugBOT = ugBOT + N.data[nuclide]['scatxs'][k]*NDarray[i-nBins*(k-1),j]
 						j = j+1
 					totXS[i] = tot
 					scatXS[i] = scat
+					fisXS[i] = fis
 					u_g = ugTOP/ugBOT
-					fisXS[i] = N.data['fuel']['fisxs'][k]*NDarray[i-nBins*(k-1),0]
 					diffcoef[i] = (1/(3*(totXS[i]-u_g*scatXS[i])))
 
 				
-		# Fills/Updates the group-to-group scattering/transition matrix per bin
+		# Fills/Updates the group-to-group scattering/transition 
+		    # matrix per bin
 		for i in range(0,nBins):
 			count = 1
 			gcount = 1
@@ -155,7 +165,7 @@ for f in fn.listfn:
 		# Sets the initial value of the source
 		source[:] = 1/options.length
 
-###############################################################################
+####################################################################
 # Calculates the solution x to Ax=B 	
 
 
@@ -165,4 +175,4 @@ for f in fn.listfn:
 	results = Plotter()
 	results.plot(sol.x,1,nBins,nGrps,name,n)
     
-###############################################################################
+###################################################################

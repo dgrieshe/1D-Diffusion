@@ -92,12 +92,13 @@ class Nuclides:
                 
             elif keyword == 'decay':
                 self.decay = float(arguments)
-                poisonFLAG = 1
-                self.poisonList.append(self.name)
+
                 
             elif keyword == 'yield':
                 self.Yield = float(arguments)
                 self.YieldList.append(self.Yield)
+                poisonFLAG = 1
+                self.poisonList.append(self.name)
     
                 
             if keyword == 'end':
@@ -117,10 +118,10 @@ class Nuclides:
                     self.d[self.name]['fisxs'][i]=self.fisxs[i-1]
                     self.d[self.name]['scatxs'][i]=self.scatxs[i-1]
                     self.d[self.name]['Ex'+str(i)]={}
+                    self.d[self.name]['decayCST']=self.decay
                     for j in range(1,self.nGroups+1):
                         self.d[self.name]['Ex'+str(i)][j]=self.Gscat[i-1,j-1]
                     if poisonFLAG == 1:
-                        self.d[self.name]['decayCST']=self.decay
                         self.d[self.name]['yield']=self.Yield
                 self.data.update(self.d)
                 

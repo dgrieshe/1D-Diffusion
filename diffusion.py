@@ -62,7 +62,7 @@ for f in fn.listfn:
 	
 ###############################################################
 	
-	while n<3:
+	while n<10:
 		# First iteration: creates macroscopic cross section
 		    # arrays totXS, scatXS, and diffcoef with original
 		    # number densities
@@ -97,7 +97,7 @@ for f in fn.listfn:
 		else:
 			D=Depletion()
 			D.var(N, options.powerLevel, options.nYield, options.EperFission)
-			D.forEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm)
+			D.forEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
 			NDarray = D.NDarray
 			#print NDarray
 			

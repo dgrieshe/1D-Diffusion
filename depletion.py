@@ -26,6 +26,7 @@ class Depletion():
 		# Cross sections
 		self.fuel_absxs = N.data['fuel']['absxs'][1]
 		self.fuel_fisxs = N.data['fuel']['fisxs'][1]
+		self.nuclideList = N.nuclideList
 		self.poisonList = N.poisonList
 		# self.n is the number of columns in NDarray before 
 		    # the poisons start
@@ -60,7 +61,7 @@ class Depletion():
 		
 ###############################################################
 
-	def forEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType):
+	def forEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType, N):
 		# FUTURE WORK: this part needs to be updated for 
 		# boron burnup
 
@@ -102,34 +103,22 @@ class Depletion():
         # Begin forEuler
 		for i in range(0,len(NDarray)):
 
-				
 			# self.A is the matrix with the microscopic xs and 
 			    # decay constants
-			self.A = np.zeros((len(self.poisonList)+1,len(self.poisonList)+1))
-			for row in range(0,len(self.A)):
-				for col in range(0,len(self.A)):
-					if col == 0:
-						if row == 0:
-							self.A[row,col] = -self.fuel_absxs*flux[i]
-						else:
-							self.A[row,col] = YieldList[row-1]*self.energyPerFission*self.fuel_fisxs*flux[i]
-					else:
-						if row == col:
-							self.A[row,col] = -(self.p_absxs[row-1]*flux[i]+self.decayCST[row-1])
-			#print self.A
-			
-
-
 			# self.ND is the matrix with the number densities
-			self.ND = np.zeros(len(self.poisonList)+1)   
-			for row in range(0,len(self.ND)):
-				if row == 0:
-					self.ND[row] = self.NDarray[i,0]
-				else:
-					for n in range(0,len(self.poisonList)):
-						self.ND[row] = self.NDarray[i,n+self.n]
-			#print self.ND
+			self.A = np.zeros((len(self.nuclideList),len(self.nuclideList)))
+			self.ND = np.zeros(len(self.nuclideList))
 
+			n = 0
+			for nuclide in self.nuclideList:
+				row = n
+				self.ND[row] = NDarray[i,n]
+				for col in range(0,len(self.A)):
+					if col == row:
+						self.A[row,col] = -(N.data[nuclide]['absxs'][1]*flux[i]+N.data[nuclide]['decayCST'])
+				if n >= self.n:
+					self.A[row,0] = N.data[nuclide]['yield']*N.data['fuel']['fisxs'][1]*flux[i]*self.energyPerFission
+				n = n+1
 
 
 			
@@ -154,18 +143,19 @@ class Depletion():
 					# I need to recalc fisXS because fuel 
 					    # number density has changed
 					if PowerNormType == 'average':
-						poweri = flux[i]*self.energyPerFission*self.fuel_fisxs*NumDensities[SSnum,0]
+						poweri = flux[i]*self.energyPerFission*N.data['fuel']['fisxs'][1]*NumDensities[SSnum,0]
 						flux[i] = flux[i]*power[i]/poweri
 					elif PowerNormType == 'explicit':
-						poweri = (1-sum(YieldList))*flux[i]*self.energyPerFission*self.fuel_fisxs*NumDensities[SSnum-1,0]+summation[i]
+						poweri = (1-sum(YieldList))*flux[i]*self.energyPerFission*N.data['fuel']['fisxs'][1]*NumDensities[SSnum-1,0]+summation[i]
 						flux[i] = flux[i]*(power[i]-summation[i])/(poweri-summation[i])
 					if flux[i] < 0:
 						print("Error: negative flux in bin %i" % i)
+						print(power[i]-summation[i])
+						print(poweri-summation[i])
 
 
 
 					NumDensities = np.concatenate((NumDensities,np.array([self.ND+j*np.dot(self.A,self.ND)])))
-					#print np.array([self.ND+j*np.dot(self.A,self.ND)])[0]
 					for count in range(0,12):
 					    if np.array([self.ND+j*np.dot(self.A,self.ND)])[0][count] < 0:
 						    print("Error: negative number density in bin %i for nuclide %i" % (i,count))
@@ -177,35 +167,22 @@ class Depletion():
 				# Update summation between substeps
 				summ = 0
 				m = 0
-				# FUTURE WORK: can I make this a vector calc? 
-				# sum(self.Yield[:]*self.decayCST[:]*NumDensities[SSnum,:])
 				for p in self.poisonList:
-					summ = summ + self.Yield[m]*self.decayCST[m]*NumDensities[SSnum,m+1]
+					summ = summ + self.Yield[m]*self.decayCST[m]*NumDensities[SSnum,m+self.n]
 					m = m+1
 				summation[i] = summ
-				#print NumDensities[SSnum,0]
 
 				SSnum = SSnum+1
 				j = j+self.t
 
-			
-			#NumDensities=np.array(self.ND+self.t*np.dot(self.ND,A))
-			#print("NumDensities")
-			#print NumDensities
-			#print NumDensities[self.num-1,0]
-			#print flux
-			#print SSnum
-			#print self.num
 
 			# Updating NDarray
 			# self.n is the number of columns in NDarray 
 			    # before the poisons start
-			self.NDarray[i,0] = NumDensities[self.num-1,0]
-			for n in range (0,len(self.poisonList)):
-				self.NDarray[i,n+self.n] = NumDensities[self.num-1,n+1] 
+			self.NDarray[i,:] = NumDensities[self.num-1,:]
 
-			#print self.NDarray[i]
+			#print self.NDarray[i,:]
 
 		
 ###############################################################
-#end class
+# end class

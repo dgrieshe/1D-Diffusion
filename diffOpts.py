@@ -26,8 +26,7 @@ class DiffusionOpts1D:
 
 			keyword, arguments = line.split(' ', 1)
 			if keyword == 'length':
-				self.length = arguments
-				self.length = float(self.length)
+				self.length = float(arguments)
 				
 			elif keyword == 'numgroups':
 				self.numGroups = arguments
@@ -38,16 +37,14 @@ class DiffusionOpts1D:
 				self.numBins = int(self.numBins)
 				
 			elif keyword == 'powerLevel':
-				self.powerLevel = arguments
-				self.powerLevel = float(self.powerLevel)
+				self.powerLevel = float(arguments)
 				
 			elif keyword == 'FneutronYield':
 				self.nYield = arguments
 				self.nYield = float(self.nYield)
 				
 			elif keyword == 'EperFission':
-				self.EperFission = arguments
-				self.EperFission = float(self.EperFission)
+				self.EperFission = float(arguments)
 
 			elif keyword == 'PowerNorm[average;explicit]':
 				self.PowerNorm = arguments
@@ -55,8 +52,7 @@ class DiffusionOpts1D:
 					print('Error: PowerNorm entry is invalid. Use average or explicit. Delete all empty lines below it.')
 
 			elif keyword == 'ConvergeError':
-				self.ConvError = arguments
-				self.ConvError = float(self.ConvError)
+				self.ConvError = float(arguments)
 				
 			else:
 				continue

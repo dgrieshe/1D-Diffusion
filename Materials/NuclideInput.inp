@@ -1,6 +1,6 @@
 numNuclides 13
 #list non-poison nuclides first
-#
+#list fuel first
 
 nuclide 1
 name fuel

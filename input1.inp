@@ -6,5 +6,6 @@ numbins 700
 powerLevel 3000
 FneutronYield 2.3
 EperFission 3.38e-17
+DepletionType[local;global] global
 PowerNorm[average;explicit] explicit
 ConvergeError 1e-5

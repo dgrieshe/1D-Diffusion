@@ -1,9 +1,9 @@
-length 350
-rightBC escape 
-leftBC escape 
+length 320
+rightBC escape
+leftBC escape
 numgroups 1
 numbins 700
-powerLevel 3000
+powerLevel 2500
 FneutronYield 2.3
 EperFission 3.38e-17
 DepletionType[local;global] global

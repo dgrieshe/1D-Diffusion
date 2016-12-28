@@ -6,24 +6,24 @@ nuclide 1
 name fuel
 numGroups 1
 u_g 0.0113
-totalXs 2.43e-23 #1.01 
-absorptionXs 7.6e-24 #0.3
-fissionXs 7e-24 #0.1           
-scatterXs 1.67e-23 #0.71        
-Gscat1 1.67e-23 #0    
-decay 0 
-                         
-end 0                
-          
+totalXs 2.976e-24
+absorptionXs 2.976e-24
+fissionXs 1.734e-24
+scatterXs 0.0
+Gscat1 0.0
+decay 0
+
+end 0
+
 nuclide 2    
 name moderator
 numGroups 1   
 u_g 0.324
-totalXs 1.0366e-22 #1               
-absorptionXs 6.6e-25 #0.01
-fissionXs 0 #0
-scatterXs 1.03e-22 #0.99
-Gscat1 1.03e-22 #0
+totalXs 2E-23
+absorptionXs 0.0
+fissionXs 0.0
+scatterXs 2E-23
+Gscat1 2E-23
 decay 0
 
 end 0
@@ -32,11 +32,11 @@ nuclide 3
 name boron
 numGroups 1
 u_g 0.0606
-totalXs 0 #1
-absorptionXs 0 #0.01
-fissionXs 0 #0
-scatterXs 0 #0.99
-Gscat1 0 #0
+totalXs 1E-22
+absorptionXs 1E-22
+fissionXs 0.0
+scatterXs 0.0
+Gscat1 0.0
 decay 0
 
 end 0

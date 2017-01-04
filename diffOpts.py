@@ -29,19 +29,16 @@ class DiffusionOpts1D:
                 self.length = float(arguments)
                 
             elif keyword == 'numgroups':
-                self.numGroups = arguments
-                self.numGroups = int(self.numGroups)
+                self.numGroups = int(arguments)
                 
             elif keyword == 'numbins':
-                self.numBins = arguments
-                self.numBins = int(self.numBins)
+                self.numBins = int(arguments)
                 
             elif keyword == 'powerLevel':
                 self.powerLevel = float(arguments)
                 
             elif keyword == 'FneutronYield':
-                self.nYield = arguments
-                self.nYield = float(self.nYield)
+                self.nYield = float(arguments)
                 
             elif keyword == 'EperFission':
                 self.EperFission = float(arguments)
@@ -51,13 +48,24 @@ class DiffusionOpts1D:
                 if (self.PowerNorm != 'average' and self.PowerNorm != 'explicit'):
                     print('Error: PowerNorm entry is invalid. Use average or explicit.')
                     
-            elif keyword == 'DepletionType[local;global]':
+            elif keyword == 'RenormType[local;global]':
+                self.RenormType = arguments
+                if (self.RenormType != 'local' and self.RenormType != 'global'):
+                    print('Error: RenormType entry is invalid. Use local or global.')
+
+            elif keyword == 'DepletionType[matrixEXP;forEuler]':
                 self.DepletionType = arguments
-                if (self.DepletionType != 'local' and self.DepletionType != 'global'):
-                    print('Error: DepletionType entry is invalid. Use local or global.')
+                if (self.DepletionType != 'matrixEXP' and self.DepletionType != 'forEuler'):
+                    print('Error: DepletionType entry is invalid. Use matrixEXP or forEuler.')
 
             elif keyword == 'ConvergeError':
                 self.ConvError = float(arguments)
+
+            elif keyword == 'timeStep[sec]':
+                self.timeStep = float(arguments)
+
+            elif keyword == 'numSubStep':
+                self.numSubStep = int(arguments)
                 
             else:
                 continue

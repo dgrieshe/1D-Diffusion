@@ -96,11 +96,17 @@ for f in fn.listfn:
 
         else:
             D=Depletion()
-            D.var(N, options.powerLevel, options.nYield, options.EperFission)
-            if options.DepletionType == 'local':
-                D.LocalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
-            elif options.DepletionType == 'global':
-                D.GlobalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+            D.var(N, options.timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission)
+            if options.RenormType == 'local':
+                if options.DepletionType == 'matrixEXP':
+                    D.LocalEXP(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                elif options.DepletionType == 'forEuler':
+                    D.LocalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+            elif options.RenormType == 'global':
+                if options.DepletionType == 'matrixEXP':
+                    D.GlobalEXP(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                elif options.DepletionType == 'forEuler':
+                    D.GlobalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray
             #print NDarray
             

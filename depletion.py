@@ -87,6 +87,7 @@ class Depletion():
 
         # Begin matrixEXP
         for i in range(0,len(NDarray)):
+            #print("running...")
 
             # self.A is the matrix with the microscopic xs and 
                 # decay constants
@@ -122,8 +123,7 @@ class Depletion():
                 else:
                     # Power renormalization
                     # Flux is already multiplied by delta
-                    # FUTURE WORK: realize that other
-                        # nuclides could have a fission xs
+                    # FUTURE WORK: other nuclides have fissxs
                     if PowerNormType == 'average':
                         poweri = flux[i]*self.energyPerFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
                         flux[i] = flux[i]*power[i]/poweri
@@ -138,9 +138,9 @@ class Depletion():
 
 
                     self.NDarray[i,:] = np.dot(self.NDbin,scipy.sparse.linalg.expm_multiply(self.A,B))
-                    for count in range(0,len(self.nuclideList)):
-                        if np.dot(self.NDbin,scipy.sparse.linalg.expm_multiply(self.A,B))[count] < 0:
-                            print("Error: negative number density in bin %i for nuclide %i" % (i,count))
+                    #for count in range(0,len(self.nuclideList)):
+                    #    if np.dot(self.NDbin,scipy.sparse.linalg.expm_multiply(self.A,B))[count] < 0:
+                    #        print("Error: negative number density in bin %i for nuclide %i" % (i,count))
 
 
                 # Update self.NDbin between substeps
@@ -201,8 +201,7 @@ class Depletion():
         # Sub-stepping
         j = self.t
         while j <= self.t*self.num:
-            # Currently no need for SSnum, the sub-step
-                # counter. Can easily be added.
+            #print("running")
 
             for i in range (0,len(NDarray)):
 
@@ -241,17 +240,13 @@ class Depletion():
                     m = m+1
                 summation[i] = summ
                 # Update bin power
-                # FUTURE WORK: realize that not only the fuel 
-                    # may have a fisxs
-                # CHECK that this works well
+                # FUTURE WORK: not only the fuel has fisxs
                 if PowerNormType == 'average':
                     power[i] = flux[i]*self.energyPerFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
                 elif PowerNormType == 'explicit':
                     powerP1[i] = (1-sum(YieldList))*flux[i]*self.energyPerFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
 
             # Power renormalization
-            # FUTURE WORK: might save time by skipping this for 
-                # last step
             if PowerNormType == 'average':
                 flux[:] = flux[:]*self.powerLevel/sum(power)
                 # Compute new power matrix as a check
@@ -433,8 +428,6 @@ class Depletion():
         # Sub-stepping
         j = self.t
         while j <= self.t*self.num:
-            # Currently no need for SSnum, the sub-step
-                # counter. Can easily be added.
 
             for i in range (0,len(NDarray)):
 
@@ -469,17 +462,13 @@ class Depletion():
                     m = m+1
                 summation[i] = summ
                 # Update bin power
-                # FUTURE WORK: realize that not only the fuel 
-                    # may have a fisxs
-                # CHECK that this works well
+                # FUTURE WORK: not only fuel has fisxs
                 if PowerNormType == 'average':
                     power[i] = flux[i]*self.energyPerFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
                 elif PowerNormType == 'explicit':
                     powerP1[i] = (1-sum(YieldList))*flux[i]*self.energyPerFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
 
             # Power renormalization
-            # FUTURE WORK: might save time by skipping this for 
-                # last step
             if PowerNormType == 'average':
                 flux[:] = flux[:]*self.powerLevel/sum(power)
                 # Compute new power matrix as a check

@@ -19,13 +19,16 @@ from depletion import *
 fn = FileName()
 fn.GetFileName()
 
+massU = []
+inp = 1
+
 for f in fn.listfn:
     print f
     # Retains only the number associated with the input
         # file: "input1" becomes "1" This makes the 
         # output name nice
     name = f[len(f)-5]
-    
+
     # read input
     options = DiffusionOpts1D()
     options.read(f)
@@ -62,7 +65,7 @@ for f in fn.listfn:
     
 ###############################################################
     
-    while n<10:
+    while n<5:
         # First iteration: creates macroscopic cross section
             # arrays totXS, scatXS, and diffcoef with original
             # number densities
@@ -91,6 +94,7 @@ for f in fn.listfn:
                     fisXS.append(fis)
                     u_g = ugTOP/ugBOT
                     diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
+            massU.append(sum(NDarray[:,1])*options.delta)
 
 
 
@@ -108,11 +112,12 @@ for f in fn.listfn:
                 elif options.DepletionType == 'forEuler':
                     D.GlobalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray
+            massU.append(sum(NDarray[:,1])*options.delta)
             #print NDarray
             
             
-            plt.plot(NDarray[:,0])
-            plt.savefig('./output/numdensity')
+            #plt.plot(NDarray[:,0])
+            #plt.savefig('./output/numdensity')
             
             total = totXS
             # Further iterations: updates totXS, scatXS, and
@@ -182,6 +187,8 @@ for f in fn.listfn:
         sol = Solve()
         sol.solve(options, A.inv, source, fisXS, NDarray, N.data, n)
     results = Plotter()
-    results.plot(sol.x,1,nBins,nGrps,name,n)
+    #results.plotFLUX(sol.x,1,nBins,nGrps,name,n)
+    inp = inp+1
+results.plotMASSU(massU, name, n, inp-1)
     
 ###################################################################

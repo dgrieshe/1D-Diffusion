@@ -363,9 +363,9 @@ class Depletion():
 
 
                     self.NDarray[i,:] = np.array([self.NDbin+j*np.dot(self.A,self.NDbin)])
-                    for count in range(0,len(self.nuclideList)):
-                        if np.array([self.NDbin+j*np.dot(self.A,self.NDbin)])[0][count] < 0:
-                            print("Error: negative number density in bin %i for nuclide %i" % (i,count))
+                    #for count in range(0,len(self.nuclideList)):
+                    #    if np.array([self.NDbin+j*np.dot(self.A,self.NDbin)])[0][count] < 0:
+                    #        print("Error: negative number density in bin %i for nuclide %i" % (i,count))
 
 
                 # Update self.NDbin between substeps

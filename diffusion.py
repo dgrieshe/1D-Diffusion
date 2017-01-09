@@ -19,15 +19,14 @@ from depletion import *
 fn = FileName()
 fn.GetFileName()
 
+# Variables for plotting
 massU = []
+flux1 = []
+flux2 = []
 inp = 1
 
 for f in fn.listfn:
     print f
-    # Retains only the number associated with the input
-        # file: "input1" becomes "1" This makes the 
-        # output name nice
-    name = f[len(f)-5]
 
     # read input
     options = DiffusionOpts1D()
@@ -65,7 +64,7 @@ for f in fn.listfn:
     
 ###############################################################
     
-    while n<5:
+    while n<100:
         # First iteration: creates macroscopic cross section
             # arrays totXS, scatXS, and diffcoef with original
             # number densities
@@ -186,9 +185,78 @@ for f in fn.listfn:
         A.invertA()
         sol = Solve()
         sol.solve(options, A.inv, source, fisXS, NDarray, N.data, n)
+
+
+####################################################################
+# Prepares plotting
+
+        # Power normalization to get "true" flux
+        # FUTURE WORK: see if first power normalization in 
+            # depletion can be eliminated thanks to this
+        power = np.zeros(len(NDarray))
+        powerP1 = np.zeros(len(NDarray))
+        summation = np.zeros(len(NDarray))
+        flux = sol.x
+        flux[:] = sol.x[:]*options.delta
+
+        nn = len(N.nuclideList)-len(N.poisonList)
+        decayCST = []
+        p_absxs = []
+        Yield = []
+        for p in N.poisonList:
+            decayCST.append(N.data[p]['decayCST'])
+            Yield.append(N.data[p]['yield'])
+            p_absxs.append(N.data[p]['absxs'][1])
+
+
+
+        if n == 0:
+            for k in range(1,nGrps+1):
+                for i in range(0,nBins):
+                    fis = 0
+                    j = 0
+                    for nuclide in N.nuclideList:
+                        fis = fis + N.data[nuclide]['fisxs'][k]*NDarray[i,j]
+                        j = j+1
+                    fisXS.append(fis)
+
+        for i in range(0,len(NDarray)):
+            summ = 0
+            m = 0
+            for p in N.poisonList:
+                summ = summ + Yield[m]*decayCST[m]*NDarray[i,m+nn]
+                m = m+1
+            summation[i] = summ
+
+        # Flux is already multiplied by delta.
+
+        if options.PowerNorm == 'average':
+            power[:] = flux[:]*options.EperFission*fisXS[:]
+            flux[:] = flux[:]*options.powerLevel/sum(power)
+            # Compute new power matrix as a check
+            #power[:] = flux[:]*options.EperFission*fisXS[:]
+        elif options.PowerNorm == 'explicit':
+            powerP1[:] = (1-sum(N.YieldList))*flux[:]*options.EperFission*fisXS[:]
+            flux[:] = flux[:]*(options.powerLevel-sum(summation))/sum(powerP1)
+            # Compute new power matrix as a check
+            #power[:] = (1-sum(N.YieldList))*flux[:]*options.EperFission*fisXS[:]+summation[:]
+        #print sum(power)
+
+        #Storing fluxes for FluxRMS calc
+        if inp == 1:
+            flux1.append(sol.x)
+        if inp == 2:
+            flux2.append(sol.x)
+
+####################################################################
+# Plotting 
+
     results = Plotter()
-    #results.plotFLUX(sol.x,1,nBins,nGrps,name,n)
+    results.plotFLUX(sol.x,1,nBins,nGrps,inp,n)
     inp = inp+1
-results.plotMASSU(massU, name, n, inp-1)
+
+# Only use plotFluxRMS for 2 input files
+results.plotFluxRMS(sol.x, inp, n, flux1, flux2)
+results.plotMASSU(massU, n, inp-1)
     
 ###################################################################

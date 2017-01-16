@@ -17,7 +17,7 @@ end 0
 
 nuclide 2    
 name moderator
-numGroups 1   
+numGroups 1
 u_g 0.324
 totalXs 2E-23
 absorptionXs 0.0
@@ -45,11 +45,11 @@ nuclide 4
 name poison01             
 numGroups 1
 u_g 0
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11
-Gscat1 0 #0                   
+totalXs 0
+absorptionXs 0
+fissionXs 0
+scatterXs 0
+Gscat1 0                  
 decay 1.772
 yield 0.00299
 
@@ -59,11 +59,11 @@ nuclide 5
 name poison02
 numGroups 1  
 u_g 0      
-totalXs 0 #1.1        
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11
-Gscat1 0 #0          
+totalXs 0      
+absorptionXs 0
+fissionXs 0
+scatterXs 0
+Gscat1 0          
 decay 0.5774
 yield 0.00825
                 
@@ -73,11 +73,11 @@ nuclide 6
 name poison03
 numGroups 1  
 u_g 0    
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11
-Gscat1 0 #0
+totalXs 0
+absorptionXs 0
+fissionXs 0
+scatterXs 0
+Gscat1 0
 decay 0.06743  
 yield 0.0155
 
@@ -87,11 +87,11 @@ nuclide 7
 name poison04
 numGroups 1
 u_g 0
-totalXs 0 #1.1   
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11     
-Gscat1 0 #0
+totalXs 0   
+absorptionXs 0
+fissionXs 0
+scatterXs 0    
+Gscat1 0
 decay 0.006214
 yield 0.01935
 
@@ -101,11 +101,11 @@ nuclide 8
 name poison05
 numGroups 1
 u_g 0
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11
-Gscat1 0 #0
+totalXs 0
+absorptionXs 0
+fissionXs 0
+scatterXs 0
+Gscat1 0
 decay 0.0004739
 yield 0.01165
                     
@@ -115,11 +115,11 @@ nuclide 9
 name poison06        
 numGroups 1 
 u_g 0         
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11             
-Gscat1 0 #0            
+totalXs 0
+absorptionXs 0
+fissionXs 0
+scatterXs 0             
+Gscat1 0            
 decay 0.00004810
 yield 0.00645
 
@@ -129,11 +129,11 @@ nuclide 10
 name poison07       
 numGroups 1  
 u_g 0        
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11             
-Gscat1 0 #0            
+totalXs 0
+absorptionXs 0
+fissionXs 0
+scatterXs 0            
+Gscat1 0            
 decay 0.000005344
 yield 0.00231
 
@@ -143,11 +143,11 @@ nuclide 11
 name poison08       
 numGroups 1  
 u_g 0        
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11             
-Gscat1 0 #0            
+totalXs 0
+absorptionXs 0
+fissionXs 0
+scatterXs 0             
+Gscat1 0            
 decay 0.0000005726
 yield 0.00164
 
@@ -157,11 +157,11 @@ nuclide 12
 name poison09       
 numGroups 1  
 u_g 0        
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11             
-Gscat1 0 #0            
+totalXs 0 
+absorptionXs 0
+fissionXs 0
+scatterXs 0            
+Gscat1 0            
 decay 0.0000001036
 yield 0.00085
 
@@ -171,11 +171,11 @@ nuclide 13
 name poison10      
 numGroups 1 
 u_g 0         
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11             
-Gscat1 0 #0            
+totalXs 0
+absorptionXs 0
+fissionXs 0
+scatterXs 0            
+Gscat1 0           
 decay 0.00000002959
 yield 0.00043
 
@@ -185,11 +185,11 @@ nuclide 14
 name poison11      
 numGroups 1   
 u_g 0       
-totalXs 0 #1.1
-absorptionXs 0 #0.9
-fissionXs 0 #0
-scatterXs 0 #0.11             
-Gscat1 0 #0            
+totalXs 0
+absorptionXs 0
+fissionXs 0
+scatterXs 0             
+Gscat1 0           
 decay 0.0000000007585
 yield 0.00057
 

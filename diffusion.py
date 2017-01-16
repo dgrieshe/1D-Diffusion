@@ -227,7 +227,7 @@ for f in fn.listfn:
             summ = 0
             m = 0
             for p in N.poisonList:
-                summ = summ + Yield[m]*decayCST[m]*NDarray[i,m+nn]
+                summ = summ + decayCST[m]*NDarray[i,m+nn]
                 m = m+1
             summation[i] = summ
 
@@ -257,7 +257,7 @@ for f in fn.listfn:
     results = Plotter()
     results.plotFLUX(sol.x,1,nBins,nGrps,inp,n)
     inp = inp+1
-    
+
 results.plotMASSU(massU, n, inp-1)
 if inp == 2:
     results.plotFluxRMS(sol.x, inp, n, flux1, flux2)

@@ -117,7 +117,7 @@ class Depletion():
                 summ = 0
                 m = 0
                 for p in self.poisonList:
-                    summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
+                    summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
                     m = m+1
                 summation[i] = summ
 
@@ -187,7 +187,7 @@ class Depletion():
                 summ = 0
                 m = 0
                 for p in self.poisonList:
-                    summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
+                    summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
                     m = m+1
                 summation[i] = summ
                 # Update bin power
@@ -232,7 +232,7 @@ class Depletion():
             summ = 0
             m = 0
             for p in self.poisonList:
-                summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
+                summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
                 m = m+1
             summation[i] = summ
 
@@ -326,7 +326,7 @@ class Depletion():
                 summ = 0
                 m = 0
                 for p in self.poisonList:
-                    summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
+                    summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
                     m = m+1
                 summation[i] = summ
 
@@ -354,7 +354,7 @@ class Depletion():
             summ = 0
             m = 0
             for p in self.poisonList:
-                summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
+                summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
                 m = m+1
             summation[i] = summ
 
@@ -409,7 +409,7 @@ class Depletion():
                 summ = 0
                 m = 0
                 for p in self.poisonList:
-                    summ = summ + self.Yield[m]*self.decayCST[m]*self.NDarray[i,m+self.n]
+                    summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
                     m = m+1
                 summation[i] = summ
                 # Update bin power

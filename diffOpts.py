@@ -61,6 +61,9 @@ class DiffusionOpts1D:
             elif keyword == 'ConvergeError':
                 self.ConvError = float(arguments)
 
+            elif keyword == 'numTimeStep':
+                self.n = int(arguments)
+
             elif keyword == 'timeStep[sec]':
                 self.timeStep = float(arguments)
 

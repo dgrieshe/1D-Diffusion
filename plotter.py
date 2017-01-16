@@ -62,9 +62,12 @@ class Plotter:
 		for i in range(0,inp):
 			for j in range(0,n):
 				mass[j] = massU[n*i+j]
+				#if i == 0 and j == 0:
+				#	print mass[j]
 			legend[i] = i+1
 			plt.plot(mass, colors[i])
 			plt.legend(legend)
+		#print mass[j]
 		plt.savefig('./output/massU')
 
 

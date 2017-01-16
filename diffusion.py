@@ -64,7 +64,7 @@ for f in fn.listfn:
     
 ###############################################################
     
-    while n<100:
+    while n<options.n:
         # First iteration: creates macroscopic cross section
             # arrays totXS, scatXS, and diffcoef with original
             # number densities
@@ -93,7 +93,8 @@ for f in fn.listfn:
                     fisXS.append(fis)
                     u_g = ugTOP/ugBOT
                     diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
-            massU.append(sum(NDarray[:,1])*options.delta)
+            massU.append(sum(NDarray[:,0])*options.delta)
+            #print massU[n]
 
 
 
@@ -102,21 +103,22 @@ for f in fn.listfn:
             D.var(N, options.timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission)
             if options.RenormType == 'local':
                 if options.DepletionType == 'matrixEXP':
-                    D.LocalEXP(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                    D.LocalEXP(flux, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
                 elif options.DepletionType == 'forEuler':
                     D.LocalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             elif options.RenormType == 'global':
                 if options.DepletionType == 'matrixEXP':
-                    D.GlobalEXP(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                    D.GlobalEXP(flux, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
                 elif options.DepletionType == 'forEuler':
                     D.GlobalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray
-            massU.append(sum(NDarray[:,1])*options.delta)
-            #print NDarray
+            #print NDarray[320]
+            massU.append(sum(NDarray[:,0])*options.delta)
+            #print massU[n]
             
             
-            #plt.plot(NDarray[:,0])
-            #plt.savefig('./output/numdensity')
+            plt.plot(NDarray[:,0])
+            plt.savefig('./output/numdensity')
             
             total = totXS
             # Further iterations: updates totXS, scatXS, and
@@ -127,7 +129,7 @@ for f in fn.listfn:
                 for i in range(nBins*(k-1),nBins*k):
 
                     # Reset local variables
-                    tot = 0 
+                    tot = 0
                     scat = 0
                     fis = 0
                     ugTOP = 0
@@ -183,20 +185,21 @@ for f in fn.listfn:
 
 
         A.invertA()
+        #print("solving1")
         sol = Solve()
         sol.solve(options, A.inv, source, fisXS, NDarray, N.data, n)
+        #print("solving2")
 
 
 ####################################################################
 # Prepares plotting
 
-        # Power normalization to get "true" flux
-        # FUTURE WORK: see if first power normalization in 
-            # depletion can be eliminated thanks to this
+        # Power normalization to get "true" flux to plot
         power = np.zeros(len(NDarray))
         powerP1 = np.zeros(len(NDarray))
         summation = np.zeros(len(NDarray))
         flux = sol.x
+        # Multiplying flux by delta
         flux[:] = sol.x[:]*options.delta
 
         nn = len(N.nuclideList)-len(N.poisonList)
@@ -228,7 +231,7 @@ for f in fn.listfn:
                 m = m+1
             summation[i] = summ
 
-        # Flux is already multiplied by delta.
+        # Flux is already multiplied by delta
 
         if options.PowerNorm == 'average':
             power[:] = flux[:]*options.EperFission*fisXS[:]
@@ -254,9 +257,9 @@ for f in fn.listfn:
     results = Plotter()
     results.plotFLUX(sol.x,1,nBins,nGrps,inp,n)
     inp = inp+1
-
-# Only use plotFluxRMS for 2 input files
-results.plotFluxRMS(sol.x, inp, n, flux1, flux2)
+    
 results.plotMASSU(massU, n, inp-1)
+if inp == 2:
+    results.plotFluxRMS(sol.x, inp, n, flux1, flux2)
     
 ###################################################################

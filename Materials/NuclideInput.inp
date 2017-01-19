@@ -7,7 +7,7 @@ name fuel
 numGroups 1
 u_g 0.0113
 totalXs 2.976e-24
-absorptionXs 2.976e-24
+absorptionXs 1.734e-24 #2.976e-24
 fissionXs 1.734e-24
 scatterXs 0.0
 Gscat1 0.0

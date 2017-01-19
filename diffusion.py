@@ -108,7 +108,7 @@ for f in fn.listfn:
                     D.LocalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             elif options.RenormType == 'global':
                 if options.DepletionType == 'matrixEXP':
-                    D.GlobalEXP(flux, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                    D.GlobalEXP(flux, NDarray, fisXS, N.YieldList, options.PowerNorm, N, options.delta)
                 elif options.DepletionType == 'forEuler':
                     D.GlobalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray

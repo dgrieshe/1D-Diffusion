@@ -129,7 +129,7 @@ class Depletion():
             
 ###############################################################
 
-    def GlobalEXP(self, flux, NDarray, fisXS, YieldList, PowerNormType, N):
+    def GlobalEXP(self, flux, NDarray, fisXS, YieldList, PowerNormType, N, delta):
         #print("global matrixEXP")
 
 
@@ -160,7 +160,6 @@ class Depletion():
                 # May be able to move this definition of 
                     #A and NDbin outside the loop
                 self.A = np.zeros((len(self.nuclideList),len(self.nuclideList)))
-                B = np.zeros((len(self.nuclideList),len(self.nuclideList)))
                 self.NDbin = np.zeros(len(self.nuclideList))
     
                 n = 0
@@ -169,13 +168,12 @@ class Depletion():
                     self.NDbin[row] = self.NDarray[i,n]
                     for col in range(0,len(self.A)):
                         if col == row:
-                            self.A[row,col] = -(N.data[nuclide]['absxs'][1]*flux[i]+N.data[nuclide]['decayCST'])
-                            B[row,col] = 1
+                            self.A[row,col] = -(N.data[nuclide]['absxs'][1]*flux[i]/delta+N.data[nuclide]['decayCST'])
                     if n >= self.n:
-                        self.A[row,0] = N.data[nuclide]['yield']*N.data['fuel']['fisxs'][1]*flux[i]*self.EperFission
+                        self.A[row,0] = N.data[nuclide]['yield']*N.data['fuel']['fisxs'][1]*flux[i]/delta*self.EperFission
                     n = n+1
                 #if i == 320:
-                    #print self.A
+                #    print self.A[0,0]
 
                 # Depletion
                 # Update number densities in bin i

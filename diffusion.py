@@ -103,14 +103,14 @@ for f in fn.listfn:
             D.var(N, options.timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission)
             if options.RenormType == 'local':
                 if options.DepletionType == 'matrixEXP':
-                    D.LocalEXP(flux, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                    D.LocalEXP(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
                 elif options.DepletionType == 'forEuler':
-                    D.LocalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                    D.LocalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             elif options.RenormType == 'global':
                 if options.DepletionType == 'matrixEXP':
-                    D.GlobalEXP(flux, NDarray, fisXS, N.YieldList, options.PowerNorm, N, options.delta)
+                    D.GlobalEXP(flux, options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
                 elif options.DepletionType == 'forEuler':
-                    D.GlobalEuler(sol.x*options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                    D.GlobalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray
             #print NDarray[320]
             massU.append(sum(NDarray[:,0])*options.delta)
@@ -199,8 +199,7 @@ for f in fn.listfn:
         powerP1 = np.zeros(len(NDarray))
         summation = np.zeros(len(NDarray))
         flux = sol.x
-        # Multiplying flux by delta
-        flux[:] = sol.x[:]*options.delta
+        #flux [:] = sol.x[:]*options.delta
 
         nn = len(N.nuclideList)-len(N.poisonList)
         decayCST = []
@@ -235,15 +234,15 @@ for f in fn.listfn:
 
         if options.PowerNorm == 'average':
             power[:] = flux[:]*options.EperFission*fisXS[:]
-            flux[:] = flux[:]*options.powerLevel/sum(power)
+            flux[:] = flux[:]*options.powerLevel/(sum(power)*options.delta)
             # Compute new power matrix as a check
             #power[:] = flux[:]*options.EperFission*fisXS[:]
         elif options.PowerNorm == 'explicit':
             powerP1[:] = (1-sum(N.YieldList))*flux[:]*options.EperFission*fisXS[:]
-            flux[:] = flux[:]*(options.powerLevel-sum(summation))/sum(powerP1)
+            flux[:] = flux[:]*(options.powerLevel-sum(summation)*options.delta)/(sum(powerP1)*options.delta)
             # Compute new power matrix as a check
             #power[:] = (1-sum(N.YieldList))*flux[:]*options.EperFission*fisXS[:]+summation[:]
-        #print sum(power)
+        #print sum(power)*options.delta
 
         #Storing fluxes for FluxRMS calc
         if inp == 1:

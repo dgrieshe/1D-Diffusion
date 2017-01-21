@@ -57,6 +57,8 @@ class DiffusionOpts1D:
                 self.DepletionType = arguments
                 if (self.DepletionType != 'matrixEXP' and self.DepletionType != 'forEuler'):
                     print('Error: DepletionType entry is invalid. Use matrixEXP or forEuler.')
+                if self.DepletionType == 'forEuler':
+                    print("Forward Euler is not accurate for long time steps!")
 
             elif keyword == 'ConvergeError':
                 self.ConvError = float(arguments)

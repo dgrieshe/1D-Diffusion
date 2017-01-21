@@ -37,7 +37,7 @@ class Depletion():
         
 ###############################################################
         
-    def LocalEXP(self, flux, summation, NDarray, fisXS, YieldList, PowerNormType, N):
+    def LocalEXP(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N):
         #print("local matrixEXP")
         
         self.NDarray = NDarray
@@ -47,7 +47,6 @@ class Depletion():
         # Step power normalization
         power = np.zeros(len(NDarray))
 
-        # Flux is already multiplied by delta
         if PowerNormType == 'average':
             power[:] = flux[:]*self.EperFission*fisXS[:]
         elif PowerNormType == 'explicit':
@@ -94,13 +93,19 @@ class Depletion():
                     # FUTURE WORK: other nuclides have fissxs
                     if PowerNormType == 'average':
                         poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
-                        flux[i] = flux[i]*power[i]/poweri
+                        flux[i] = flux[i]*power[i]/(poweri*delta)
+                        # Compute new power matrix as a check
+                        #poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
                     elif PowerNormType == 'explicit':
                         #print(power[i])
                         poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
-                        flux[i] = flux[i]*(power[i]-summation[i])/(poweri-summation[i])
+                        flux[i] = flux[i]*(power[i]-summation[i]*delta)/((poweri-summation[i])*delta)
+                        # Compute new power matrix as a check
+                        #poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
                     if flux[i] < 0:
                         print("Error: negative flux in bin %i" % i)
+                    #if i == 320:
+                    #    print (poweri)*delta
 
 
 
@@ -129,7 +134,7 @@ class Depletion():
             
 ###############################################################
 
-    def GlobalEXP(self, flux, NDarray, fisXS, YieldList, PowerNormType, N, delta):
+    def GlobalEXP(self, flux, delta, NDarray, fisXS, YieldList, PowerNormType, N):
         #print("global matrixEXP")
 
 
@@ -197,14 +202,15 @@ class Depletion():
 
             # Power renormalization
             if PowerNormType == 'average':
-                flux[:] = flux[:]*self.powerLevel/sum(power)
+                flux[:] = flux[:]*self.powerLevel/(sum(power)*delta)
                 # Compute new power matrix as a check
                 #power[:] = flux[:]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[:,0]
             elif PowerNormType == 'explicit':
-                flux[:] = flux[:]*(self.powerLevel-sum(summation))/sum(powerP1)
+                #flux[:] = flux[:]*(self.powerLevel-sum(summation))/sum(powerP1)
+                flux[:] = flux[:]*(self.powerLevel-sum(summation)*delta)/(sum(powerP1)*delta)
                 # Compute new power matrix as a check
                 #power[:] = (1-sum(YieldList))*flux[:]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[:,0]+summation[:]
-            #print sum(power)
+            #print sum(power)*delta
 
 
             # Next sub-step
@@ -212,50 +218,17 @@ class Depletion():
         
 ###############################################################
 
-    def LocalEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType, N):
+    def LocalEuler(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N):
         #print("local forward Euler")
-        print("Forward Euler is not accurate for long time steps!")
 
         self.NDarray = NDarray
 
-
-        ###################################
-        # Step power normalization
-
         power = np.zeros(len(NDarray))
-        powerP1 = np.zeros(len(NDarray))
-        summation = np.zeros(len(NDarray))
-
-        for i in range(0,len(NDarray)):
-            summ = 0
-            m = 0
-            for p in self.poisonList:
-                summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
-                m = m+1
-            summation[i] = summ
-
-
-        # Flux is already multiplied by delta.
-
         if PowerNormType == 'average':
             power[:] = flux[:]*self.EperFission*fisXS[:]
-            flux[:] = flux[:]*self.powerLevel/sum(power)
-            # Compute new power matrix to use in renormalization
-            power[:] = flux[:]*self.EperFission*fisXS[:]
         elif PowerNormType == 'explicit':
-            # powerP1 is "part 1" of the power, where summation
-                # is "part 2"
-            powerP1[:] = (1-sum(YieldList))*flux[:]*self.EperFission*fisXS[:]
-            # I found that '+ summation[:]' and '- summation[:]'
-                # do not cancel each other out
-            #print sum(powerP1[:] + summation[:] - summation[:])
-            #print sum(powerP1)
-            flux[:] = flux[:]*(self.powerLevel-sum(summation))/sum(powerP1)
-            # Compute new power matrix to use in renormalization
             power[:] = (1-sum(YieldList))*flux[:]*self.EperFission*fisXS[:]+summation[:]
-        #print sum(power)
-        ###################################
-
+        #print sum(power)*delta
 
 
         # Begin forEuler
@@ -300,14 +273,19 @@ class Depletion():
                         # nuclides could have a fission xs
                     if PowerNormType == 'average':
                         poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
-                        flux[i] = flux[i]*power[i]/poweri
+                        flux[i] = flux[i]*power[i]/(poweri*delta)
+                        # Compute new power matrix as a check
+                        poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
                     elif PowerNormType == 'explicit':
                         #print(power[i])
                         poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
-                        flux[i] = flux[i]*(power[i]-summation[i])/(poweri-summation[i])
-                        #print (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*NumDensities[SSnum-1,0]+summation[i]
+                        flux[i] = flux[i]*(power[i]-summation[i]*delta)/((poweri-summation[i])*delta)
+                        # Compute new power matrix as a check
+                        poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
                     if flux[i] < 0:
                         print("Error: negative flux in bin %i" % i)
+                    #if i == 320:
+                    #    print poweri
 
 
 
@@ -334,52 +312,26 @@ class Depletion():
 
 ###############################################################
 
-    def GlobalEuler(self, flux, NDarray, fisXS, YieldList, PowerNormType, N):
+    def GlobalEuler(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N):
         #print("global forward Euler")
-        print("Forward Euler is not accurate for long time steps!")
 
 
         self.NDarray = NDarray
         #print("NDarray")
         #print self.NDarray
-
-        # Step power normalization
         power = np.zeros(len(NDarray))
         powerP1 = np.zeros(len(NDarray))
-        summation = np.zeros(len(NDarray))
 
-        for i in range(0,len(NDarray)):
-            summ = 0
-            m = 0
-            for p in self.poisonList:
-                summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
-                m = m+1
-            summation[i] = summ
 
-        # Flux is already multiplied by delta. See input 
-            # for forEuler
-        # I can use fisXS here because no depletion has yet 
-            # occured
-
-        if PowerNormType == 'average':
-            power[:] = flux[:]*self.EperFission*fisXS[:]
-            flux[:] = flux[:]*self.powerLevel/sum(power)
-            # Compute new power matrix as a check
-            #power[:] = flux[:]*self.EperFission*fisXS[:]
-        elif PowerNormType == 'explicit':
-            powerP1[:] = (1-sum(YieldList))*flux[:]*self.EperFission*fisXS[:]
-            flux[:] = flux[:]*(self.powerLevel-sum(summation))/sum(powerP1)
-            # Compute new power matrix as a check
-            #power[:] = (1-sum(YieldList))*flux[:]*self.EperFission*fisXS[:]+summation[:]
-        #print sum(power)
 
 
         # Sub-stepping
         j = self.t/self.num
         while j <= self.t:
 
-            for i in range (0,len(NDarray)):
 
+
+            for i in range (0,len(NDarray)):
                 # self.A is the matrix with the microscopic xs 
                     # and decay constants
                 # self.NDbin is the matrix with the number 
@@ -400,6 +352,8 @@ class Depletion():
                         self.A[row,0] = N.data[nuclide]['yield']*N.data['fuel']['fisxs'][1]*flux[i]*self.EperFission
                     n = n+1
 
+
+
                 # Depletion
                 # Update number densities in bin i
                 self.NDarray[i,:] = np.array([self.NDbin+j*np.dot(self.A,self.NDbin)])[0][:]
@@ -417,22 +371,23 @@ class Depletion():
                 elif PowerNormType == 'explicit':
                     powerP1[i] = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
 
+
+
             # Power renormalization
             if PowerNormType == 'average':
-                flux[:] = flux[:]*self.powerLevel/sum(power)
+                flux[:] = flux[:]*self.powerLevel/(sum(power)*delta)
                 # Compute new power matrix as a check
                 #power[:] = flux[:]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[:,0]
             elif PowerNormType == 'explicit':
-                flux[:] = flux[:]*(self.powerLevel-sum(summation))/sum(powerP1)
+                flux[:] = flux[:]*(self.powerLevel-sum(summation)*delta)/(sum(powerP1)*delta)
                 # Compute new power matrix as a check
                 #power[:] = (1-sum(YieldList))*flux[:]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[:,0]+summation[:]
-            #print sum(power)
+            #print sum(power)*delta
+
 
 
             # Next sub-step
             j = j+self.t/self.num
-
-
 
 
 

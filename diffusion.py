@@ -199,7 +199,6 @@ for f in fn.listfn:
         powerP1 = np.zeros(len(NDarray))
         summation = np.zeros(len(NDarray))
         flux = sol.x
-        #flux [:] = sol.x[:]*options.delta
 
         nn = len(N.nuclideList)-len(N.poisonList)
         decayCST = []
@@ -230,7 +229,6 @@ for f in fn.listfn:
                 m = m+1
             summation[i] = summ
 
-        # Flux is already multiplied by delta
 
         if options.PowerNorm == 'average':
             power[:] = flux[:]*options.EperFission*fisXS[:]

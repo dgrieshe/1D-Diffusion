@@ -93,19 +93,19 @@ class Depletion():
                     # FUTURE WORK: other nuclides have fissxs
                     if PowerNormType == 'average':
                         poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
-                        flux[i] = flux[i]*power[i]/(poweri*delta)
+                        flux[i] = flux[i]*power[i]/(poweri)
                         # Compute new power matrix as a check
                         #poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
                     elif PowerNormType == 'explicit':
                         #print(power[i])
                         poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
-                        flux[i] = flux[i]*(power[i]-summation[i]*delta)/((poweri-summation[i])*delta)
+                        flux[i] = flux[i]*(power[i]-summation[i])/(poweri-summation[i])
                         # Compute new power matrix as a check
                         #poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
                     if flux[i] < 0:
                         print("Error: negative flux in bin %i" % i)
                     #if i == 320:
-                    #    print (poweri)*delta
+                    #    print (poweri)
 
 
 
@@ -173,9 +173,9 @@ class Depletion():
                     self.NDbin[row] = self.NDarray[i,n]
                     for col in range(0,len(self.A)):
                         if col == row:
-                            self.A[row,col] = -(N.data[nuclide]['absxs'][1]*flux[i]/delta+N.data[nuclide]['decayCST'])
+                            self.A[row,col] = -(N.data[nuclide]['absxs'][1]*flux[i]+N.data[nuclide]['decayCST'])
                     if n >= self.n:
-                        self.A[row,0] = N.data[nuclide]['yield']*N.data['fuel']['fisxs'][1]*flux[i]/delta*self.EperFission
+                        self.A[row,0] = N.data[nuclide]['yield']*N.data['fuel']['fisxs'][1]*flux[i]*self.EperFission
                     n = n+1
                 #if i == 320:
                 #    print self.A[0,0]
@@ -273,13 +273,13 @@ class Depletion():
                         # nuclides could have a fission xs
                     if PowerNormType == 'average':
                         poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
-                        flux[i] = flux[i]*power[i]/(poweri*delta)
+                        flux[i] = flux[i]*power[i]/(poweri)
                         # Compute new power matrix as a check
                         poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
                     elif PowerNormType == 'explicit':
                         #print(power[i])
                         poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
-                        flux[i] = flux[i]*(power[i]-summation[i]*delta)/((poweri-summation[i])*delta)
+                        flux[i] = flux[i]*(power[i]-summation[i])/((poweri-summation[i]))
                         # Compute new power matrix as a check
                         poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
                     if flux[i] < 0:

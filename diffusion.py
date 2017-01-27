@@ -49,7 +49,7 @@ for f in fn.listfn:
     # Group-to-group scattering
     Gscat = np.zeros((nBins,nGrps*nGrps))
     sourceGroup = []
-    #print Gscat
+    powerPlot = []
     
     N = Nuclides()
     N.read()
@@ -94,6 +94,7 @@ for f in fn.listfn:
                     u_g = ugTOP/ugBOT
                     diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
             massU.append(sum(NDarray[:,0])*options.delta)
+            massU1 = sum(NDarray[:,0])*options.delta
             #print massU[n]
 
 
@@ -103,12 +104,12 @@ for f in fn.listfn:
             D.var(N, options.timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission)
             if options.RenormType == 'local':
                 if options.DepletionType == 'matrixEXP':
-                    D.LocalEXP(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                    D.LocalEXP(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot)
                 elif options.DepletionType == 'forEuler':
                     D.LocalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             elif options.RenormType == 'global':
                 if options.DepletionType == 'matrixEXP':
-                    D.GlobalEXP(flux, options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
+                    D.GlobalEXP(flux, options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot)
                 elif options.DepletionType == 'forEuler':
                     D.GlobalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray
@@ -117,8 +118,8 @@ for f in fn.listfn:
             #print massU[n]
             
             
-            plt.plot(NDarray[:,0])
-            plt.savefig('./output/numdensity')
+            #plt.plot(NDarray[:,0])
+            #plt.savefig('./output/numdensity')
             
             total = totXS
             # Further iterations: updates totXS, scatXS, and
@@ -252,11 +253,12 @@ for f in fn.listfn:
 # Plotting 
 
     results = Plotter()
-    results.plotFLUX(sol.x,1,nBins,nGrps,inp,n)
+    #results.plotFLUX(sol.x,1,nBins,nGrps,inp,n)
+    results.plotINTflux(powerPlot, inp)
     inp = inp+1
 
-results.plotMASSU(massU, n, inp-1)
-if inp == 2:
-    results.plotFluxRMS(sol.x, inp, n, flux1, flux2)
+results.plotMASSU(massU, massU1, n, inp-1)
+#if inp == 2:
+    #results.plotFluxRMS(sol.x, inp, n, flux1, flux2)
     
 ###################################################################

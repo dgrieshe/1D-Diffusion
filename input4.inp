@@ -7,9 +7,9 @@ powerLevel 0.025
 FneutronYield 2.3
 EperFission 3.38e-17
 DepletionType[matrixEXP;forEuler] matrixEXP
-RenormType[local;global] global
+RenormType[local;global] local
 PowerNorm[average;explicit] explicit
 numTimeStep 10
-timeStep[sec] 3600 #86400
+timeStep[sec] 3600
 numSubStep 4
 ConvergeError 1e-5

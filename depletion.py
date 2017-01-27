@@ -37,7 +37,7 @@ class Depletion():
         
 ###############################################################
         
-    def LocalEXP(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N):
+    def LocalEXP(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot):
         #print("local matrixEXP")
         
         self.NDarray = NDarray
@@ -130,11 +130,14 @@ class Depletion():
 
                 ###################################
 
+        for i in range(0,self.num):
+            powerPlot.append(sum(flux)*delta)
+
 
             
 ###############################################################
 
-    def GlobalEXP(self, flux, delta, NDarray, fisXS, YieldList, PowerNormType, N):
+    def GlobalEXP(self, flux, delta, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot):
         #print("global matrixEXP")
 
 
@@ -211,6 +214,8 @@ class Depletion():
                 # Compute new power matrix as a check
                 #power[:] = (1-sum(YieldList))*flux[:]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[:,0]+summation[:]
             #print sum(power)*delta
+
+            powerPlot.append(sum(flux)*delta)
 
 
             # Next sub-step

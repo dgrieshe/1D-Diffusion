@@ -49,7 +49,9 @@ for f in fn.listfn:
     # Group-to-group scattering
     Gscat = np.zeros((nBins,nGrps*nGrps))
     sourceGroup = []
-    powerPlot = []
+    powerPlot = np.zeros(1+(options.n-1)*(options.numSubStep+1))
+    pPlotINDEX = 0
+    #print 1+(options.n-1)*(options.numSubStep+1)
     
     N = Nuclides()
     N.read()
@@ -104,12 +106,14 @@ for f in fn.listfn:
             D.var(N, options.timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission)
             if options.RenormType == 'local':
                 if options.DepletionType == 'matrixEXP':
-                    D.LocalEXP(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot)
+                    D.LocalEXP(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot, pPlotINDEX, n)
+                    pPlotINDEX = D.INDEX
                 elif options.DepletionType == 'forEuler':
                     D.LocalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             elif options.RenormType == 'global':
                 if options.DepletionType == 'matrixEXP':
-                    D.GlobalEXP(flux, options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot)
+                    D.GlobalEXP(flux, options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot, pPlotINDEX)
+                    pPlotINDEX = D.INDEX
                 elif options.DepletionType == 'forEuler':
                     D.GlobalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray
@@ -248,6 +252,11 @@ for f in fn.listfn:
             flux1.append(sol.x)
         if inp == 2:
             flux2.append(sol.x)
+
+        #powerPlot.append(sum(flux)*options.delta)
+        powerPlot[pPlotINDEX] = sum(flux)*options.delta
+        #print pPlotINDEX
+        pPlotINDEX = pPlotINDEX+1
 
 ####################################################################
 # Plotting 

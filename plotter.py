@@ -55,7 +55,8 @@ class Plotter:
 
 		import numpy as np
 		import matplotlib.pyplot as plt
-		print inp
+
+		#print len(powerPlot)
 
 		legend = np.arange(1,5)
 		colors = ['r','b','g', 'c', 'm', 'y', 'k']	

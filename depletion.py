@@ -37,15 +37,17 @@ class Depletion():
         
 ###############################################################
         
-    def LocalEXP(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot):
+    def LocalEXP(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot, INDEX, TS):
         #print("local matrixEXP")
         
         self.NDarray = NDarray
+        self.INDEX = INDEX
 
         ###################################
 
-        # Step power normalization
+        # Setup for step power normalization
         power = np.zeros(len(NDarray))
+        summationSS = summation
 
         if PowerNormType == 'average':
             power[:] = flux[:]*self.EperFission*fisXS[:]
@@ -82,66 +84,59 @@ class Depletion():
             ###################################
             # Depletion
             j = self.t/self.num
+            SS = 1
             while j <= self.t:
 
-                if j == self.t/self.num:
-                    self.NDarray[i,:] = np.dot(scipy.sparse.linalg.expm(self.A*self.t/self.num),self.NDbin)
+                self.NDarray[i,:] = np.dot(scipy.sparse.linalg.expm(self.A*self.t/self.num),self.NDbin)
 
-                else:
-                    # Power renormalization
-                    # Flux is already multiplied by delta
-                    # FUTURE WORK: other nuclides have fissxs
-                    if PowerNormType == 'average':
-                        poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
-                        flux[i] = flux[i]*power[i]/(poweri)
-                        # Compute new power matrix as a check
-                        #poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
-                    elif PowerNormType == 'explicit':
-                        #print(power[i])
-                        poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
-                        flux[i] = flux[i]*(power[i]-summation[i])/(poweri-summation[i])
-                        # Compute new power matrix as a check
-                        #poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summation[i]
+                if PowerNormType == 'average':
+                    poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
+                    flux[i] = flux[i]*power[i]/(poweri)
+                    # Compute new power matrix as a check
+                    #poweri = flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
+                elif PowerNormType == 'explicit':
+                    summ = 0
+                    m = 0
+                    for p in self.poisonList:
+                        summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
+                        m = m+1
+                    summationSS[i] = summ
+                    poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summationSS[i]
+                    flux[i] = flux[i]*(power[i]-summation[i])/(poweri-summationSS[i])
+                    # Compute new power matrix as a check
+                    #poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summationSS[i]
                     if flux[i] < 0:
-                        print("Error: negative flux in bin %i" % i)
-                    #if i == 320:
-                    #    print (poweri)
+                         print("Error: negative flux in bin %i" % i)
+                #if i == 320:
+                #    print (poweri)
 
 
-
-                    self.NDarray[i,:] = np.dot(scipy.sparse.linalg.expm(self.A*self.t/self.num),self.NDbin)
-                    #for count in range(0,len(self.nuclideList)):
-                    #    if np.dot(self.NDbin,scipy.sparse.linalg.expm_multiply(self.A,B))[count] < 0:
-                    #        print("Error: negative number density in bin %i for nuclide %i" % (i,count))
+                powerPlot[(TS-1)*(self.num+1)+SS] = powerPlot[(TS-1)*(self.num+1)+SS]+flux[i]*delta
+                    #print (TS-1)*(self.num+1)+SS
 
 
                 # Update self.NDbin between substeps
                 self.NDbin[:] = np.dot(self.NDbin,scipy.sparse.linalg.expm(self.A*self.t/self.num))[:]
 
-                # Update summation between substeps
-                summ = 0
-                m = 0
-                for p in self.poisonList:
-                    summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
-                    m = m+1
-                summation[i] = summ
 
                 j = j+self.t/self.num
+                SS = SS+1
 
                 ###################################
 
         for i in range(0,self.num):
-            powerPlot.append(sum(flux)*delta)
+            self.INDEX = self.INDEX+1
 
 
             
 ###############################################################
 
-    def GlobalEXP(self, flux, delta, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot):
+    def GlobalEXP(self, flux, delta, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot, INDEX):
         #print("global matrixEXP")
 
 
         self.NDarray = NDarray
+        self.INDEX = INDEX
         #print("NDarray")
         #print self.NDarray
 
@@ -215,7 +210,9 @@ class Depletion():
                 #power[:] = (1-sum(YieldList))*flux[:]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[:,0]+summation[:]
             #print sum(power)*delta
 
-            powerPlot.append(sum(flux)*delta)
+            #powerPlot.append(sum(flux)*delta)
+            powerPlot[self.INDEX] = sum(flux)*delta
+            self.INDEX = self.INDEX+1
 
 
             # Next sub-step

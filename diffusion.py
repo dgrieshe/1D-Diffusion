@@ -117,7 +117,7 @@ for f in fn.listfn:
                 elif options.DepletionType == 'forEuler':
                     D.GlobalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray
-            #print NDarray[320]
+            #print NDarray[320][0]
             massU.append(sum(NDarray[:,0])*options.delta)
             #print massU[n]
             
@@ -127,7 +127,7 @@ for f in fn.listfn:
             
             total = totXS
             # Further iterations: updates totXS, scatXS, and
-                # diffcoef with new number densities Because the 
+                # diffcoef with new number densities because the 
                 # XS arrays have length nBins*nGrps, NDarray must 
                 # iterate as i-nBins*(k-1)
             for k in range(1, nGrps+1):
@@ -256,6 +256,7 @@ for f in fn.listfn:
         #powerPlot.append(sum(flux)*options.delta)
         powerPlot[pPlotINDEX] = sum(flux)*options.delta
         #print pPlotINDEX
+        #print powerPlot[pPlotINDEX]
         pPlotINDEX = pPlotINDEX+1
 
 ####################################################################

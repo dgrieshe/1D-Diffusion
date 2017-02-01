@@ -9,7 +9,7 @@ EperFission 3.38e-17
 DepletionType[matrixEXP;forEuler] matrixEXP
 RenormType[local;global] local
 PowerNorm[average;explicit] explicit
-numTimeStep 10
+numTimeStep 3
 timeStep[sec] 3600
 numSubStep 4
 ConvergeError 1e-5

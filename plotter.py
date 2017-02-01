@@ -55,8 +55,9 @@ class Plotter:
 
 		import numpy as np
 		import matplotlib.pyplot as plt
+		import csv
 
-		#print len(powerPlot)
+		#print powerPlot
 
 		legend = np.arange(1,5)
 		colors = ['r','b','g', 'c', 'm', 'y', 'k']	
@@ -64,6 +65,28 @@ class Plotter:
 		plt.plot(powerPlot, colors[inp])
 		plt.legend(legend)
 		plt.savefig('./output/INTflux')
+
+		#import csv
+		#fl = open('filename.csv', 'w')
+		#writer = csv.writer(fl)
+		#writer.writerow(['label1', 'label2', 'label3'])
+		#for values in powerPlot:
+		#	writer.write(values)
+		#	print values
+		#fl.close()   
+
+		if inp == 1:
+		    f = open('output/filename', 'w')
+		    f.close()
+
+		f = open('output/filename', 'a')
+		for i in range(0,len(powerPlot)):
+			f.write(str(powerPlot[i]))
+			f.write(', ')
+		f.write('\n')
+		f.write('\n')
+		# I need it to append to the end of the file each time.
+
 
 
 

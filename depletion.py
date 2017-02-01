@@ -47,7 +47,7 @@ class Depletion():
 
         # Setup for step power normalization
         power = np.zeros(len(NDarray))
-        summationSS = summation
+        #summationSS = np.zeros(len(NDarray))
 
         if PowerNormType == 'average':
             power[:] = flux[:]*self.EperFission*fisXS[:]
@@ -56,7 +56,7 @@ class Depletion():
         #print sum(power)
 
         ###################################
-
+        #POWER = 0 
 
         # Begin matrixEXP
         for i in range(0,len(NDarray)):
@@ -79,6 +79,8 @@ class Depletion():
                 if n >= self.n:
                     self.A[row,0] = N.data[nuclide]['yield']*N.data['fuel']['fisxs'][1]*flux[i]*self.EperFission
                 n = n+1
+            #if i == 320:
+            #    print self.A
 
 
             ###################################
@@ -100,29 +102,37 @@ class Depletion():
                     for p in self.poisonList:
                         summ = summ + self.decayCST[m]*self.NDarray[i,m+self.n]
                         m = m+1
-                    summationSS[i] = summ
-                    poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summationSS[i]
-                    flux[i] = flux[i]*(power[i]-summation[i])/(poweri-summationSS[i])
+                    summation[i] = summ
+                    powerP1i = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0] #+summationSS[i]
+                    flux[i] = flux[i]*(power[i]-summation[i])/(powerP1i) #-summationSS[i])
                     # Compute new power matrix as a check
+                    powerP1i = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]
                     #poweri = (1-sum(YieldList))*flux[i]*self.EperFission*N.data['fuel']['fisxs'][1]*self.NDarray[i,0]+summationSS[i]
                     if flux[i] < 0:
                          print("Error: negative flux in bin %i" % i)
                 #if i == 320:
-                #    print (poweri)
+                #    print powerP1i+summation[i]
+                #    print summation[i]
+                #    print (flux[i])
+                #    print self.NDarray[i,3]
 
 
                 powerPlot[(TS-1)*(self.num+1)+SS] = powerPlot[(TS-1)*(self.num+1)+SS]+flux[i]*delta
-                    #print (TS-1)*(self.num+1)+SS
+                #if SS == 1:
+                #    print powerPlot[(TS-1)*(self.num+1)+SS]
 
 
                 # Update self.NDbin between substeps
-                self.NDbin[:] = np.dot(self.NDbin,scipy.sparse.linalg.expm(self.A*self.t/self.num))[:]
+                self.NDbin[:] = self.NDarray[i,:][:]
 
 
                 j = j+self.t/self.num
                 SS = SS+1
 
                 ###################################
+  
+            #POWER = POWER + poweri
+        #print POWER
 
         for i in range(0,self.num):
             self.INDEX = self.INDEX+1
@@ -176,13 +186,13 @@ class Depletion():
                         self.A[row,0] = N.data[nuclide]['yield']*N.data['fuel']['fisxs'][1]*flux[i]*self.EperFission
                     n = n+1
                 #if i == 320:
-                #    print self.A[0,0]
+                #    print self.A
 
                 # Depletion
                 # Update number densities in bin i
-                self.NDarray[i,:] = np.dot(scipy.sparse.linalg.expm(self.A*self.t/self.num),self.NDbin)[:]
+                self.NDarray[i,:] = np.dot(scipy.sparse.linalg.expm(self.A*self.t/self.num),self.NDbin)
                 #if i == 320:
-                #    print self.NDarray[i,:]
+                #    print self.NDarray[i,3]
                 #self.NDarray[i,:] = np.dot(self.NDbin,scipy.sparse.linalg.expm_multiply(self.A,B))
                 # Update summation in bin i
                 summ = 0

@@ -15,10 +15,12 @@ class Depletion():
 
 ###############################################################
 
-    def var(self, N, t, num, powerLevel, nYield, EperFission):
+    def var(self, N, t, num, powerLevel, nYield, EperFission, time, timePPlot):
         
         self.t = t
         self.num = num
+        self.time = time
+        self.timePPlot = timePPlot
         # Fission neutron yield
         self.y = nYield
         self.EperFission = EperFission
@@ -37,11 +39,18 @@ class Depletion():
         
 ###############################################################
         
-    def LocalEXP(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot, INDEX, TS):
+    def LocalEXP(self, flux, delta, summation, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot, INDEX, massU, timeMU, TS):
         #print("local matrixEXP")
         
         self.NDarray = NDarray
         self.INDEX = INDEX
+        self.massU = massU
+        self.timeMU = timeMU
+        j = self.t/self.num 
+        while j <= self.t:
+            self.time = self.time + self.t/self.num
+            self.timePPlot.append(self.time)
+            j = j+self.t/self.num
 
         ###################################
 
@@ -117,7 +126,11 @@ class Depletion():
                 #    print self.NDarray[i,3]
 
 
-                powerPlot[(TS-1)*(self.num+1)+SS] = powerPlot[(TS-1)*(self.num+1)+SS]+flux[i]*delta
+                powerPlot[(TS-1)*(self.num+1)+SS] = powerPlot[(TS-1)*(self.num+1)+SS] + flux[i]*delta
+                if i == 0:
+                    self.massU.append(self.NDarray[i,0])
+                else:
+                    self.massU[(TS-1)*(self.num+1)+SS] = self.massU[(TS-1)*(self.num+1)+SS] + self.NDarray[i,0]
                 #if SS == 1:
                 #    print powerPlot[(TS-1)*(self.num+1)+SS]
 
@@ -141,12 +154,14 @@ class Depletion():
             
 ###############################################################
 
-    def GlobalEXP(self, flux, delta, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot, INDEX):
+    def GlobalEXP(self, flux, delta, NDarray, fisXS, YieldList, PowerNormType, N, powerPlot, INDEX, massU, timeMU):
         #print("global matrixEXP")
 
 
         self.NDarray = NDarray
         self.INDEX = INDEX
+        self.massU = massU
+        self.timeMU = timeMU
         #print("NDarray")
         #print self.NDarray
 
@@ -161,6 +176,7 @@ class Depletion():
         while j <= self.t:
             #print("running")
             #print j
+            self.time = self.time + self.t/self.num
 
             for i in range (0,len(NDarray)):
 
@@ -222,6 +238,10 @@ class Depletion():
 
             #powerPlot.append(sum(flux)*delta)
             powerPlot[self.INDEX] = sum(flux)*delta
+            self.timePPlot.append(self.time)
+            self.massU.append(sum(NDarray[:,0])*delta)
+            #print self.massU
+            self.timeMU.append(self.time)
             self.INDEX = self.INDEX+1
 
 

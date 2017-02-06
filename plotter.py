@@ -2,141 +2,125 @@
 
 
 class Plotter:
-	
+    
 ####################################################################
-	def __init__(self):
-		self
+    def __init__(self):
+        self
 
-####################################################################		
-	def plotFLUX(self, solution, group, numBins, numGroups, inp, n):
-		
-		import numpy as np
-		import matplotlib.pyplot as plt
-		plt.clf()
-		groups = []
-		for k in range(1,numGroups+1):
-			l = 0
-			x_group = np.zeros(numBins)
-			for i in range(numBins*(k-1),numBins*k):
-				x_group[l] = solution[i]
-				l = l+1
-				
-			n = str(n)
-			inp = str(inp)
-			groups.append('group%i' %k)
-			colors = ['r','b','g','o','n','p']	
-			groups[k-1], = plt.plot(x_group, colors[k-1], label=groups[k-1])
-			plt.ylabel('flux')
-			plt.legend(groups)
-			plt.savefig('./output/flux'+inp+n)
+####################################################################        
+    def plotFLUX(self, solution, group, numBins, numGroups, inp, n):
+        
+        import numpy as np
+        import matplotlib.pyplot as plt
+        plt.clf()
+        groups = []
+        for k in range(1,numGroups+1):
+            l = 0
+            x_group = np.zeros(numBins)
+            for i in range(numBins*(k-1),numBins*k):
+                x_group[l] = solution[i]
+                l = l+1
+                
+            n = str(n)
+            inp = str(inp)
+            groups.append('group%i' %k)
+            colors = ['r','b','g','o','n','p']  
+            groups[k-1], = plt.plot(x_group, colors[k-1], label=groups[k-1])
+            plt.ylabel('flux')
+            plt.legend(groups)
+            plt.savefig('./output/flux'+inp+n)
 
-		plt.clf()
-
-
-####################################################################
-	def plotFluxRMS(self, sol, inp, n, flux1, flux2):
-
-		 import numpy as np
-		 import matplotlib.pyplot as plt
-		 plt.clf()
-
-		 RMS = []
-		 for i in range(0,len(flux1)):
-		 	RMS.append(np.sqrt(sum((flux1[i][:]-flux2[i][:])**2)))
-
-		 plt.plot(RMS)
-		 plt.savefig('./output/FluxRMS')
-
-		 plt.clf()
+        plt.clf()
 
 
 ####################################################################
-	def plotINTflux(self, powerPlot, inp):
+    def plotFluxRMS(self, sol, inp, n, flux1, flux2):
 
-		import numpy as np
-		import matplotlib.pyplot as plt
-		import csv
+         import numpy as np
+         import matplotlib.pyplot as plt
+         plt.clf()
 
-		#print powerPlot
+         RMS = []
+         for i in range(0,len(flux1)):
+            RMS.append(np.sqrt(sum((flux1[i][:]-flux2[i][:])**2)))
 
-		legend = np.arange(1,5)
-		colors = ['r','b','g', 'c', 'm', 'y', 'k']	
+         plt.plot(RMS)
+         plt.savefig('./output/FluxRMS')
 
-		plt.plot(powerPlot, colors[inp])
-		plt.legend(legend)
-		plt.savefig('./output/INTflux')
+         plt.clf()
 
-		#import csv
-		#fl = open('filename.csv', 'w')
-		#writer = csv.writer(fl)
-		#writer.writerow(['label1', 'label2', 'label3'])
-		#for values in powerPlot:
-		#	writer.write(values)
-		#	print values
-		#fl.close()   
 
-		if inp == 1:
-		    f = open('output/filename', 'w')
-		    f.close()
+####################################################################
+    def plotINTflux(self, powerPlot, inp):
 
-		f = open('output/filename', 'a')
-		for i in range(0,len(powerPlot)):
-			f.write(str(powerPlot[i]))
-			f.write(', ')
-		f.write('\n')
-		f.write('\n')
-		# I need it to append to the end of the file each time.
+        import numpy as np
+        import matplotlib.pyplot as plt
+        import csv
+
+        #print powerPlot
+
+        #legend = np.arange(1,5)
+        #colors = ['r','b','g', 'c', 'm', 'y', 'k']  
+
+        #plt.plot(powerPlot, colors[inp])
+        #plt.legend(legend)
+        #plt.savefig('./output/INTflux')
+
+        #import csv
+        #fl = open('filename.csv', 'w')
+        #writer = csv.writer(fl)
+        #writer.writerow(['label1', 'label2', 'label3'])
+        #for values in powerPlot:
+        #   writer.write(values)
+        #   print values
+        #fl.close()   
+
+        if inp == 1:
+            f = open('output/filename', 'w')
+            f.close()
+
+        f = open('output/filename', 'a')
+        for i in range(0,len(powerPlot)):
+            f.write(str(powerPlot[i]))
+            f.write(', ')
+        f.write('\n')
+        f.write('\n')
+        # I need it to append to the end of the file each time.
 
 
 
 
 ####################################################################
-	def plotMASSU(self, massU, massU1, n, inp):
+    def plotMASSU(self, timeMU, massU, massU1, n):
 
-		import numpy as np
-		import matplotlib.pyplot as plt
-		plt.clf()
-		mass = np.zeros(n)
-		legend = np.zeros(inp)
-		colors = ['r','b','g', 'c', 'm', 'y', 'k']	
+        import numpy as np
+        import matplotlib.pyplot as plt
+        plt.clf()
+        mass = np.zeros(len(timeMU))
+        #legend = np.zeros(inp)
+        #colors = ['r','b','g', 'c', 'm', 'y', 'k']  
 
-		for i in range(0,inp):
-			for j in range(0,n):
-				mass[j] = massU1-massU[n*i+j]
-				#if i == 0 and j == 0:
-				#	print mass[j]
-			legend[i] = i+1
-			plt.plot(mass, colors[i])
-			plt.legend(legend)
-		#print mass[j]
-		plt.savefig('./output/massU')
+        for j in range(0,n):
+            mass[j] = massU1-massU[j]
+                #if i == 0 and j == 0:
+                #   print mass[j]
 
-		plt.clf()
-		mass = np.zeros(n)
-		for j in range(0,n):
-			mass[j] = massU[j]-massU[n+j]
-		plt.plot(mass, colors[0])
-		plt.savefig('./output/massUdiff')
-
-		plt.clf()
-		mass = np.zeros(n)
-		for j in range(0,n):
-			mass[j] = (massU[n+j]-1.8E24)/(massU[j]-1.8E24)
-		plt.plot(mass, colors[0])
-		plt.savefig('./output/massUratio')
+        f = open('output/massU', 'a')
+        for k in range(0,len(timeMU)):
+            f.write(str(timeMU[k]))
+            f.write(', ')
+        f.write('\n')
+        for k in range(0,len(timeMU)):
+            f.write(str(massU[k]))
+            f.write(', ')
+        f.write('\n')
+        f.write('\n')
 
 
-
-		#n = str(n)
-		#plt.clf()
-		#plt.plot(massU)
-		#plt.savefig('./output/massU'+name+n)
-
-
-
-		
+        #legend[i] = i+1
+        #plt.plot(mass, colors[i])
+        #plt.legend(legend)
+        #print mass[j]
+        #plt.savefig('./output/massU')
 
 
-
-	
-	

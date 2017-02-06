@@ -3,13 +3,13 @@ rightBC escape
 leftBC escape 
 numgroups 1
 numbins 640
-powerLevel 0.025
+powerLevel 0.037
 FneutronYield 2.3
 EperFission 3.38e-17
 DepletionType[matrixEXP;forEuler] matrixEXP
 RenormType[local;global] global
 PowerNorm[average;explicit] average
-numTimeStep 3
-timeStep[sec] 3600
+numTimeStep 720
+timeStep[sec] 60
 numSubStep 4
 ConvergeError 1e-5

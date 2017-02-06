@@ -20,7 +20,6 @@ fn = FileName()
 fn.GetFileName()
 
 # Variables for plotting
-massU = []
 flux1 = []
 flux2 = []
 inp = 1
@@ -37,12 +36,15 @@ for f in fn.listfn:
     
     # Variables
     n = 0
+    time = 0
 
     totXS = []
     absXS = []
     scatXS = []
     fisXS = []
     diffcoef = []
+    massU = []
+    timeMU = []
     
     
     source = np.zeros(nBins*nGrps)
@@ -50,6 +52,7 @@ for f in fn.listfn:
     Gscat = np.zeros((nBins,nGrps*nGrps))
     sourceGroup = []
     powerPlot = np.zeros(1+(options.n-1)*(options.numSubStep+1))
+    timePPlot = []
     pPlotINDEX = 0
     #print 1+(options.n-1)*(options.numSubStep+1)
     
@@ -96,6 +99,7 @@ for f in fn.listfn:
                     u_g = ugTOP/ugBOT
                     diffcoef.append(1/(3*(totXS[i]-u_g*scatXS[i])))
             massU.append(sum(NDarray[:,0])*options.delta)
+            timeMU.append(time)
             massU1 = sum(NDarray[:,0])*options.delta
             #print massU[n]
 
@@ -103,22 +107,27 @@ for f in fn.listfn:
 
         else:
             D=Depletion()
-            D.var(N, options.timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission)
+            D.var(N, options.timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission, time, timePPlot)
             if options.RenormType == 'local':
                 if options.DepletionType == 'matrixEXP':
-                    D.LocalEXP(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot, pPlotINDEX, n)
+                    D.LocalEXP(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot, pPlotINDEX, massU, timeMU, n)
                     pPlotINDEX = D.INDEX
                 elif options.DepletionType == 'forEuler':
                     D.LocalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             elif options.RenormType == 'global':
                 if options.DepletionType == 'matrixEXP':
-                    D.GlobalEXP(flux, options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot, pPlotINDEX)
+                    D.GlobalEXP(flux, options.delta, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot, pPlotINDEX, massU, timeMU)
                     pPlotINDEX = D.INDEX
                 elif options.DepletionType == 'forEuler':
                     D.GlobalEuler(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N)
             NDarray = D.NDarray
+            time = D.time
+            timePPlot = D.timePPlot
+            massU = D.massU
+            timeMU = D.timeMU
             #print NDarray[320][0]
             massU.append(sum(NDarray[:,0])*options.delta)
+            timeMU.append(time)
             #print massU[n]
             
             
@@ -255,6 +264,7 @@ for f in fn.listfn:
 
         #powerPlot.append(sum(flux)*options.delta)
         powerPlot[pPlotINDEX] = sum(flux)*options.delta
+        timePPlot.append(time)
         #print pPlotINDEX
         #print powerPlot[pPlotINDEX]
         pPlotINDEX = pPlotINDEX+1
@@ -264,10 +274,11 @@ for f in fn.listfn:
 
     results = Plotter()
     #results.plotFLUX(sol.x,1,nBins,nGrps,inp,n)
-    results.plotINTflux(powerPlot, inp)
+    #results.plotINTflux(timePPlot, powerPlot, inp)
+    results.plotMASSU(timeMU, massU, massU1, n)
     inp = inp+1
 
-results.plotMASSU(massU, massU1, n, inp-1)
+    
 #if inp == 2:
     #results.plotFluxRMS(sol.x, inp, n, flux1, flux2)
     

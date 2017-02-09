@@ -37,6 +37,8 @@ for f in fn.listfn:
     # Variables
     n = 0
     time = 0
+    timeStep = options.timeStep
+    TScount = 0
 
     totXS = []
     absXS = []
@@ -101,13 +103,13 @@ for f in fn.listfn:
             massU.append(sum(NDarray[:,0])*options.delta)
             timeMU.append(time)
             massU1 = sum(NDarray[:,0])*options.delta
-            #print massU[n]
+            #print massU1
 
 
 
         else:
             D=Depletion()
-            D.var(N, options.timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission, time, timePPlot)
+            D.var(N, timeStep, options.numSubStep, options.powerLevel, options.nYield, options.EperFission, time, timePPlot)
             if options.RenormType == 'local':
                 if options.DepletionType == 'matrixEXP':
                     D.LocalEXP(flux, options.delta, summation, NDarray, fisXS, N.YieldList, options.PowerNorm, N, powerPlot, pPlotINDEX, massU, timeMU, n)
@@ -188,6 +190,25 @@ for f in fn.listfn:
         # Builds the linear system of equations
         A=Construct()
         A.constructA(options, diffcoef, Gscat, totXS, NDarray)
+
+
+        # Adaptive time stepping to maintain 10 timesteps every decade
+        if n == 9:
+            timeStep = 324
+            TScount = 9
+        if n == TScount+10:
+            #print('count1')
+            #print TScount
+            #print('n')
+            #print n
+            #print('timeStep1')
+            #print timeStep
+            timeStep = timeStep*10
+            #print('timeStep2')
+            #print timeStep
+            TScount = TScount+10
+            #print('count2')
+            #print TScount
         
         n = n+1
         
@@ -269,14 +290,20 @@ for f in fn.listfn:
         #print powerPlot[pPlotINDEX]
         pPlotINDEX = pPlotINDEX+1
 
+        
+
+
+
 ####################################################################
 # Plotting 
 
     results = Plotter()
     #results.plotFLUX(sol.x,1,nBins,nGrps,inp,n)
-    #results.plotINTflux(timePPlot, powerPlot, inp)
+    results.plotINTflux(timePPlot, powerPlot, inp)
+    #print massU1
     results.plotMASSU(timeMU, massU, massU1, n)
     inp = inp+1
+
 
     
 #if inp == 2:

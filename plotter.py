@@ -51,7 +51,7 @@ class Plotter:
 
 
 ####################################################################
-    def plotINTflux(self, powerPlot, inp):
+    def plotINTflux(self, time, powerPlot, inp):
 
         import numpy as np
         import matplotlib.pyplot as plt
@@ -66,20 +66,16 @@ class Plotter:
         #plt.legend(legend)
         #plt.savefig('./output/INTflux')
 
-        #import csv
-        #fl = open('filename.csv', 'w')
-        #writer = csv.writer(fl)
-        #writer.writerow(['label1', 'label2', 'label3'])
-        #for values in powerPlot:
-        #   writer.write(values)
-        #   print values
-        #fl.close()   
 
         if inp == 1:
             f = open('output/filename', 'w')
             f.close()
 
         f = open('output/filename', 'a')
+        for i in range(0,len(powerPlot)):
+            f.write(str(time[i]))
+            f.write(', ')
+        f.write('\n')
         for i in range(0,len(powerPlot)):
             f.write(str(powerPlot[i]))
             f.write(', ')
@@ -98,9 +94,9 @@ class Plotter:
         plt.clf()
         mass = np.zeros(len(timeMU))
         #legend = np.zeros(inp)
-        #colors = ['r','b','g', 'c', 'm', 'y', 'k']  
+        #colors = ['r','b','g', 'c', 'm', 'y', 'k']
 
-        for j in range(0,n):
+        for j in range(0,len(timeMU)):
             mass[j] = massU1-massU[j]
                 #if i == 0 and j == 0:
                 #   print mass[j]
@@ -111,7 +107,7 @@ class Plotter:
             f.write(', ')
         f.write('\n')
         for k in range(0,len(timeMU)):
-            f.write(str(massU[k]))
+            f.write(str(mass[k]))
             f.write(', ')
         f.write('\n')
         f.write('\n')
